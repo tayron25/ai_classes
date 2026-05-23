@@ -1,0 +1,461 @@
+================================================================================
+PLANTILLA DE PROMPTS PARA CLASIFICACIÓN MULTICLASE - CRISP-DM
+================================================================================
+Especializada para problemas donde predices UNA DE 3+ CLASES.
+Ejemplo: Iris (Setosa/Versicolor/Virginica), Dígitos (0-9), Flores (10 especies), etc.
+
+INSTRUCCIONES DE USO:
+====================
+1. Reemplaza todos los {{VALORES}} con tus datos específicos
+2. Copia el PROMPT PRINCIPAL (Sección C) completo
+3. Pégalo en ChatGPT, Claude o Copilot
+4. Recibirás un notebook con todas las fases CRISP-DM + gráficos multiclase
+
+================================================================================
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+================================================================================
+
+PROYECTO: {{NOMBRE_PROYECTO}}
+OBJETIVO: {{DESCRIPCIÓN (ej: Clasificar emails en 3 categorías: urgente, normal, spam)}}
+
+DATASET PRINCIPAL:
+  - Archivo: {{ARCHIVO_CSV.csv}}
+  - Registros: {{NÚMERO}} filas
+  - Features: {{var1, var2, var3, ...}}
+  - Target (3+ clases): {{VARIABLE_OBJETIVO}}
+  - Clases: {{CLASE_1}} (~{{%}}%), {{CLASE_2}} (~{{%}}%), {{CLASE_3}} (~{{%}}%), [más...]
+  - Número de clases: {{NÚMERO}}
+
+MODELOS A COMPARAR:
+  - Modelo 1: {{MODELO_1}} (ej: Random Forest Classifier)
+  - Modelo 2: {{MODELO_2}} (ej: XGBoost Classifier)
+
+CRITERIOS DE ÉXITO:
+  - Accuracy ≥ {{VALOR}} (% correcto global, si clases balanceadas)
+  - Macro-Precision ≥ {{VALOR}} (promedio de Precision por clase)
+  - Macro-Recall ≥ {{VALOR}} (promedio de Recall por clase)
+  - Macro-F1 ≥ {{VALOR}} (promedio de F1 por clase)
+  - Weighted-F1 ≥ {{VALOR}} (F1 ponderado por frecuencia de clase)
+  - AUC-ROC (OvR) ≥ {{VALOR}} (si aplica: One-vs-Rest)
+
+DESBALANCE:
+  - Si clases muy desbalanceadas: Usa Macro/Weighted, no Accuracy
+  - Estrategia: stratified split, class_weight='balanced'
+
+================================================================================
+SECCIÓN B: DATA DICTIONARY
+================================================================================
+
+| Feature | Tipo | Descripción | Valores/Rango |
+|---------|------|-------------|----------------|
+| {{VAR1}} | {{número/categórica}} | {{Descripción}} | {{Rango/valores}} |
+| {{VAR2}} | {{número/categórica}} | {{Descripción}} | {{Rango/valores}} |
+| **{{TARGET}}** | **categórica** | **CLASE A PREDECIR** | {{CLASE_1}}, {{CLASE_2}}, {{CLASE_3}}, ... |
+
+Ejemplo (Iris):
+| sepal_length | número | Largo del sépalo | 4.3–7.9 cm |
+| sepal_width | número | Ancho del sépalo | 2.0–4.4 cm |
+| petal_length | número | Largo del pétalo | 1.0–6.9 cm |
+| petal_width | número | Ancho del pétalo | 0.1–2.5 cm |
+| **species** | **categórica** | **ESPECIE** | Setosa, Versicolor, Virginica |
+
+================================================================================
+SECCIÓN C: PROMPT PRINCIPAL (COPIAR COMPLETO)
+================================================================================
+
+---COMIENZA AQUÍ---
+
+Crea un **Jupyter Notebook completo** que clasifique en {{NÚMERO}} clases
+({{CLASE_1}}, {{CLASE_2}}, {{CLASE_3}}, ...) usando la metodología **CRISP-DM**.
+Compara {{MODELO_1}} vs {{MODELO_2}}.
+
+### ESPECIFICACIONES:
+
+**Proyecto:** {{NOMBRE_PROYECTO}}
+**Dataset:** {{ARCHIVO_CSV}} (~{{NÚMERO}} registros)
+**Features:** {{var1, var2, var3, ...}}
+**Target:** {{VARIABLE_OBJETIVO}} ({{NÚMERO}} clases)
+**Clases:** {{CLASE_1}} (~{{%}}%), {{CLASE_2}} (~{{%}}%), {{CLASE_3}} (~{{%}}%), ...
+**Modelos:** {{MODELO_1}} vs {{MODELO_2}}
+**Criterios:** Accuracy ≥ {{VALOR}}, Macro-F1 ≥ {{VALOR}}, Weighted-F1 ≥ {{VALOR}}, AUC ≥ {{VALOR}}
+
+### ESTRUCTURA (6 FASES CRISP-DM):
+
+#### FASE 0: INTRODUCCIÓN
+- 📌 Markdown: Título, estudiante, objetivo
+- 📌 Markdown: ¿Qué es CRISP-DM? Tabla de 6 fases
+- 📌 Markdown: Data Dictionary
+- 💻 Código: Importar librerías (numpy, pandas, matplotlib, seaborn, sklearn, {{MODELO_1}}, {{MODELO_2}}, joblib)
+- 📌 Markdown: Justificación de librerías
+
+#### FASE 1: BUSINESS UNDERSTANDING
+- 📌 "El Problema": ¿Por qué es importante clasificar en {{NÚMERO}} clases?
+- 📌 "Costo de Errores": ¿Qué clase mal clasificada cuesta más?
+  - Ej: En diagnóstico médico, confundir tipo de enfermedad puede ser peligroso
+  - Ej: En reconocimiento de dígitos, algunos dígitos se confunden más (8 vs 3)
+- 📌 "Variables Disponibles": Describir features
+- 📌 "Criterios de Éxito": Tabla métrica | objetivo | interpretación
+- 📌 "¿Por qué {{MODELO_1}} y {{MODELO_2}}?": Comparación
+- 💻 Cargar dataset: pd.read_csv(), .shape, .columns, .head(10)
+
+#### FASE 2: DATA UNDERSTANDING
+
+**2.1 Carga y estructura:**
+- 💻 df.dtypes, df.describe()
+- 📌 Interpretación
+
+**2.2 Calidad:**
+- 💻 Nulos, duplicados
+- 💻 Distribución de tipos
+
+**2.3 Distribución del Target (clases):**
+- 💻 value_counts(), proporciones para cada clase
+- 💻 Gráfico de barras: número de muestras por clase
+- 📌 ¿Balanceado o desbalanceado?
+- 📌 ¿Hay una clase muy pequeña (< 10 muestras)?
+
+**2.4 Distribución de Features Numéricas:**
+- 💻 Grid 4 columnas de histogramas
+- 📌 ¿Formas similares entre clases?
+
+**2.5 Features Numéricas vs Target (boxplots por clase):**
+- 💻 Para cada feature importante, boxplot mostrando {{NÚMERO}} boxes (una por clase)
+- 💻 Colorear cada clase diferente
+- 📌 ¿Se ven separables? ¿Qué clase es más distinta?
+
+**2.6 Matriz de Correlación:**
+- 💻 Heatmap triangular
+- 💻 Gráfico barras: features ordenadas por |correlación| con target
+  (convertir target a numérico: 0, 1, 2, ...)
+- 📌 Top features
+
+**2.7 Scatter Plots 2D/3D (reducción dimensional):**
+- 💻 PCA o t-SNE para visualizar las {{NÚMERO}} clases en 2D
+- 💻 Colorear puntos por clase
+- 📌 ¿Se agrupan bien las clases? ¿Hay solapamiento?
+
+**2.8 Outliers (método IQR):**
+- 💻 Tabla: feature | N_outliers | % total
+- 💻 Grid de boxplots
+- 📌 Estrategia
+
+#### FASE 3: DATA PREPARATION
+
+**3.1 Limpieza y Codificación:**
+- 💻 Eliminar duplicados
+- 💻 Codificar target: {{CLASE_1}}→0, {{CLASE_2}}→1, {{CLASE_3}}→2, ...
+- 💻 Codificar otras categorías
+- 📌 Justificar mapping
+
+**3.2 Capping de Outliers:**
+- 💻 Función iqr_cap() en features numéricas
+- 💻 Reportar valores recortados
+
+**3.3 Selección de Features:**
+- 💻 Calcular correlación con target para cada feature
+- 💻 Filtrar: |r| ≥ 0.15
+- 💻 Mostrar SELECCIONADAS vs DESCARTADAS
+
+**3.4 Multicolinealidad (VIF):**
+- 💻 Tabla: feature | VIF
+- 📌 Si VIF > 10: eliminar
+
+**3.5 División Train/Test Estratificada:**
+- 💻 train_test_split(stratify=y, test_size=0.20)
+- 💻 Mostrar distribución de clases en train vs test
+- 📌 ¿Se preservaron proporciones?
+
+**3.6 Estandarización:**
+- 💻 StandardScaler en Pipeline
+
+#### FASE 4: MODELING
+
+**4.1 Configuración:**
+- 📌 "¿Qué es {{MODELO_1}}?"
+- 📌 "¿Qué es {{MODELO_2}}?"
+- 💻 Crear instancias con class_weight='balanced' si desbalanceado
+
+**4.2 Pipelines:**
+- 💻 Pipeline {{MODELO_1}}: StandardScaler → {{MODELO_1}}Classifier
+- 💻 Pipeline {{MODELO_2}}: StandardScaler → {{MODELO_2}}Classifier
+
+**4.3 Búsqueda de Hiperparámetros:**
+- 💻 Definir param_grid para ambos modelos
+- 💻 RandomizedSearchCV(n_iter=20, cv=5, scoring='f1_weighted')
+- 💻 Mostrar best_params_, best_score_
+- 💻 Tabla comparativa: Modelo | best_score_
+
+**4.4 Validación Cruzada:**
+- 💻 cross_val_score(scoring='f1_weighted')
+- 💻 Mostrar media ± desv. est.
+
+#### FASE 5: EVALUATION
+
+**5.1 Predicciones y Métricas:**
+- 💻 y_pred = model.predict(X_test)
+- 💻 y_pred_proba = model.predict_proba(X_test)
+- 💻 Calcular:
+  * Accuracy
+  * Precision (macro, micro, weighted)
+  * Recall (macro, micro, weighted)
+  * F1 (macro, micro, weighted)
+  * AUC-ROC (One-vs-Rest para cada clase)
+- 💻 Tabla: Métrica | {{MODELO_1}} | {{MODELO_2}} | Objetivo
+- 📌 ¿Mejor modelo? ¿Se cumplieron criterios?
+
+**5.2 Gráfico Comparativo:**
+- 💻 Barras lado a lado: {{MODELO_1}} vs {{MODELO_2}}
+- 💻 Métricas: Accuracy, Macro-Precision, Macro-Recall, Macro-F1, Weighted-F1
+
+**5.3 Matriz de Confusión (Multiclase):**
+- 💻 Heatmap {{NÚMERO}} × {{NÚMERO}} para ambos modelos lado a lado
+- 💻 Filas = clase real, Columnas = clase predicha
+- 💻 Anotar frecuencias
+- 📌 Interpretar: ¿Qué pares de clases se confunden?
+  - Ej: ¿Versicolor se confunde más con Setosa o Virginica?
+
+**5.4 Reporte de Clasificación (por clase):**
+- 💻 sklearn.metrics.classification_report() → tabla detallada
+- 💻 Mostrar Precision, Recall, F1 por CADA clase
+- 📌 ¿Alguna clase tiene rendimiento pobre?
+
+**5.5 Curva ROC (One-vs-Rest):**
+- 💻 Graficar curva ROC para cada clase
+- 💻 Mostrar AUC para cada clase
+- 💻 Ej: Clase 0 vs resto, Clase 1 vs resto, Clase 2 vs resto
+- 📌 ¿Alguna clase es fácil/difícil de detectar?
+
+**5.6 Feature Importance:**
+- 💻 Barras Top 10 features para ambos modelos
+- 📌 ¿Importancia similar?
+
+**5.7 Análisis de Errores:**
+- 💻 Mostrar las 5 predicciones más equivocadas (mayor diferencia en probabilidad)
+- 💻 Entender por qué se confunden esas clases
+- 📌 Feature values de casos mal clasificados
+
+#### FASE 6: DEPLOYMENT
+
+**6.1 Modelo Ganador:**
+- 💻 Comparar {{MODELO_1}} vs {{MODELO_2}} por Weighted-F1 o Macro-F1
+- 💻 Entrenar con TODO el dataset
+- 💻 Guardar: joblib.dump(model, 'clasificador_{{PROYECTO}}.pkl')
+
+**6.2 Predictor Interactivo:**
+- 💻 Función que acepte feature values → retorne clase + probabilidades
+- Ej: classify_iris(sepal_length, sepal_width, petal_length, petal_width)
+  Retorna:
+  {
+    'predicción': 'Virginica',
+    'confianza': 0.92,
+    'probabilidades': {
+      'Setosa': 0.02,
+      'Versicolor': 0.06,
+      'Virginica': 0.92
+    }
+  }
+- 💻 3–5 ejemplos realistas
+
+**6.3 Conclusiones:**
+- 📌 "Rendimiento Final": Se cumplieron criterios?
+- 📌 "Desempeño por Clase": Cuál clase se predice mejor/peor
+- 📌 "Features Más Importantes": Top 3
+- 📌 "Confusiones Comunes": Pares de clases que se confunden
+- 📌 "Limitaciones": Desbalance? Datos insuficientes en alguna clase?
+- 📌 "Trabajo Futuro": Más datos, rebalanceo, otras técnicas
+
+### REQUISITOS TÉCNICOS:
+
+**Cada celda de código:**
+- Comentarios explicativos
+- print() con resumen
+- Sin errores
+
+**Cada celda markdown:**
+- Encabezados jerárquicos
+- Tablas
+- > para énfasis
+
+**Visualizaciones:**
+- Títulos, ejes, leyenda
+- Colores: azul {{MODELO_1}}, naranja {{MODELO_2}}, verde criterio
+- Fuente legible
+
+### TONO:
+
+- Accesible
+- Riguroso
+- Muchos gráficos
+
+---FIN DEL PROMPT---
+
+================================================================================
+SECCIÓN D: EJEMPLOS DE RELLENOS TÍPICOS
+================================================================================
+
+EJEMPLO 1: Iris (Especies de Flores)
+---
+NOMBRE_PROYECTO = Clasificación de Especies de Iris
+OBJETIVO = Clasificar flores iris en 3 especies según medidas de sépalos y pétalos
+ARCHIVO_CSV = iris.csv
+NÚMERO = 150
+var1, var2, var3, var4 = sepal_length, sepal_width, petal_length, petal_width
+VARIABLE_OBJETIVO = species
+CLASE_1 = Setosa (~33%)
+CLASE_2 = Versicolor (~33%)
+CLASE_3 = Virginica (~33%)
+NÚMERO = 3
+MODELO_1 = Random Forest Classifier
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.90
+Macro-F1 ≥ 0.88
+Weighted-F1 ≥ 0.88
+AUC ≥ 0.95
+
+EJEMPLO 2: Dígitos Manuscritos (0-9)
+---
+NOMBRE_PROYECTO = Reconocimiento de Dígitos Manuscritos
+OBJETIVO = Clasificar imágenes de dígitos en 10 clases (0-9)
+ARCHIVO_CSV = digits.csv (o cargado desde sklearn)
+NÚMERO = 1797
+var1, var2, ... = pixel_0, pixel_1, ..., pixel_63 (64 features: imagen 8x8)
+VARIABLE_OBJETIVO = digit
+CLASES = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 (cada ~10%)
+NÚMERO = 10
+MODELO_1 = Random Forest Classifier
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.93
+Macro-F1 ≥ 0.92
+Weighted-F1 ≥ 0.93
+AUC ≥ 0.98
+
+EJEMPLO 3: Clasificación de Enfermedades
+---
+NOMBRE_PROYECTO = Clasificación de Tipos de Cáncer
+OBJETIVO = Clasificar biopsias en 4 tipos de cáncer según biomarcadores
+ARCHIVO_CSV = cancer_types.csv
+NÚMERO = 500
+var1, var2, ... = age, tumor_size, hormone_levels, genetic_markers (10-15 features)
+VARIABLE_OBJETIVO = cancer_type
+CLASE_1 = Tipo A (~30%)
+CLASE_2 = Tipo B (~35%)
+CLASE_3 = Tipo C (~20%)
+CLASE_4 = Tipo D (~15%)
+NÚMERO = 4
+MODELO_1 = Random Forest Classifier
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.85
+Macro-F1 ≥ 0.82
+Weighted-F1 ≥ 0.83
+AUC ≥ 0.90
+
+================================================================================
+SECCIÓN E: CHECKLIST DE CALIDAD
+================================================================================
+
+□ ¿Notebook ejecuta de principio a fin sin errores?
+□ ¿Tiene las 6 fases CRISP-DM en orden?
+□ ¿Cada celda está comentada?
+□ ¿Hay mínimo 1 gráfico por subsección?
+□ ¿Los gráficos tienen título, ejes, leyenda?
+□ ¿Se muestran Accuracy, Macro-F1, Weighted-F1?
+□ ¿Hay tabla comparativa {{MODELO_1}} vs {{MODELO_2}}?
+□ ¿Se muestran matrices de confusión multiclase para ambos?
+□ ¿Se muestra classification_report (Precision, Recall, F1 por clase)?
+□ ¿Hay curva ROC por clase (OvR)?
+□ ¿Se reporta feature importance?
+□ ¿Se justifica cada decisión?
+□ ¿Se menciona desbalance (si aplica)?
+□ ¿Se usa stratified split?
+□ ¿Hay análisis de confusiones comunes entre clases?
+□ ¿Hay predictor interactivo con probabilidades?
+□ ¿Conclusiones mencionan desempeño por clase?
+□ ¿Se propone trabajo futuro?
+
+================================================================================
+SECCIÓN F: MÉTRICAS EXPLICADAS (Clasificación Multiclase)
+================================================================================
+
+**Accuracy:**
+- Fórmula: (Predicciones correctas) / Total
+- Interpretación: % correcto global
+- ⚠️ Engañoso si desbalanceado (80% accuracy pero una clase rara no se detecta)
+
+**Precision (por clase):**
+- Fórmula: TP / (TP + FP) para cada clase
+- Interpretación: si predijo esa clase, ¿qué tan seguido es correcta?
+- Macro-Precision: promedio simple entre clases
+- Weighted-Precision: promedio ponderado por frecuencia de clase
+
+**Recall (Sensibilidad por clase):**
+- Fórmula: TP / (TP + FN) para cada clase
+- Interpretación: de esa clase real, ¿cuántos detectamos?
+- Macro-Recall: promedio simple
+- Weighted-Recall: promedio ponderado
+
+**F1-Score (por clase):**
+- Fórmula: 2 × (Precision × Recall) / (Precision + Recall)
+- Macro-F1: promedio simple entre clases → mejor si clases desbalanceadas
+- Weighted-F1: promedio ponderado → mejor si clases balanceadas
+- ✓ Usa Weighted-F1 para multiclase
+
+**AUC-ROC (One-vs-Rest):**
+- Calcula AUC para cada clase vs "resto"
+- Ej: Clase 0 vs (1+2+3+...), Clase 1 vs (0+2+3+...), etc.
+- Promedio de AUC por clase
+
+**Matriz de Confusión Multiclase:**
+- Matriz N × N (N = número de clases)
+- [i, j] = cuántas muestras de clase i se predijeron como clase j
+- Diagonal = predicciones correctas
+- Off-diagonal = errores (confusiones)
+- Útil para identificar qué clases se confunden
+
+**Classification Report:**
+- Muestra Precision, Recall, F1 para cada clase
+- Incluye support (número de muestras por clase)
+- Da visibilidad de desempeño desigual
+
+================================================================================
+SECCIÓN G: NOTAS FINALES
+================================================================================
+
+1. **Desbalance de clases:** Si una clase << otras:
+   - Usa Weighted-F1 o Macro-F1, no Accuracy
+   - Usa stratified split
+   - Usa class_weight='balanced'
+   - Considera SMOTE para sobremuestreo
+
+2. **Multiclase vs Multilabel:**
+   - Multiclase: 1 muestra → 1 clase (Iris: flor es setosa O versicolor O virginica)
+   - Multilabel: 1 muestra → múltiples clases (película: es drama Y acción Y comedia)
+   - Esta plantilla es para multiclase
+
+3. **Confusiones comunes:**
+   - Matriz de confusión revela qué clases se confunden
+   - Ej: Si flores setosa se predice como versicolor, revisa features que diferencian
+   - Considera agregar features que separen mejor esas clases
+
+4. **AUC-ROC One-vs-Rest:**
+   - Útil pero no es "la mejor" métrica multiclase
+   - Weighted-F1 o Macro-F1 son más intuitivas
+   - AUC se usa porque es probabilístico y comparable
+
+5. **Interpretabilidad:**
+   - Random Forest: fácil ver importancia de features
+   - XGBoost: también fácil, pero tree boosting es menos transparente que RF
+   - SHAP values si necesitas interpretabilidad avanzada
+
+6. **Predictor con probabilidades:**
+   - Siempre muestra probabilidades, no solo clase predicha
+   - Si probabilidades son cercanas (ej: 0.33 / 0.33 / 0.33), no confíes
+   - Muestra como "Confianza: BAJA" si max_prob < 0.6
+
+7. **Trabajo futuro:**
+   - Si una clase tiene F1 bajo, necesita más datos o features mejores
+   - Análisis de qué features separan esa clase
+   - Técnicas de reducción dimensional (PCA, t-SNE) para visualizar
+
+================================================================================
+FIN DE LA PLANTILLA - CLASIFICACIÓN MULTICLASE
+================================================================================

@@ -1,0 +1,350 @@
+================================================================================
+ÍNDICE DE PLANTILLAS DE MACHINE LEARNING - CRISP-DM
+================================================================================
+
+Este es tu PUNTO DE ENTRADA. Lee esto primero.
+
+¿QUÉ HAY AQUÍ?
+==============
+
+Tienes 7 archivos lista para usar:
+
+1. ⭐ GUIA_Elegir_Plantilla.txt ← COMIENZA POR AQUÍ
+   Árbol de decisión, preguntas, ejemplos.
+   Comparte esta guía CON UNA IA para que te ayude a elegir.
+
+2. 🔵 Plantilla_Regresion.txt
+   Para: Predecir NÚMERO (precio, temperatura, etc)
+   Con: COMPARACIÓN de 2 modelos
+   Mejores para: Explorar qué algoritmo es mejor
+
+3. 🟢 Plantilla_Regresion_UnModelo.txt
+   Para: Predecir NÚMERO
+   Con: 1 MODELO elegido (sin comparación)
+   Mejor para: Cuando ya decidiste qué algoritmo usar
+
+4. 🔴 Plantilla_Clasificacion_Binaria.txt
+   Para: Predecir UNA DE 2 CLASES (Sí/No, Spam/No)
+   Con: COMPARACIÓN de 2 modelos
+   Mejor para: Decidir entre 2 clasificadores
+
+5. 🟡 Plantilla_Clasificacion_Binaria_UnModelo.txt
+   Para: Predecir UNA DE 2 CLASES
+   Con: 1 MODELO elegido (sin comparación)
+   Mejor para: Modelo de producción en clasificación binaria
+
+6. 🟣 Plantilla_Clasificacion_Multiclase.txt
+   Para: Predecir UNA DE 3+ CLASES (Iris, Dígitos, etc)
+   Con: COMPARACIÓN de 2 modelos
+   Mejor para: Explorar en problemas multiclase
+
+7. 🟠 Plantilla_Clasificacion_Multiclase_UnModelo.txt
+   Para: Predecir UNA DE 3+ CLASES
+   Con: 1 MODELO elegido (sin comparación)
+   Mejor para: Modelo multiclase productivo
+
+================================================================================
+FLUJO RÁPIDO PARA DECIDIR
+================================================================================
+
+PASO 1: Responde 2 preguntas
+────────────────────────────
+
+Pregunta A: ¿Qué quieres predecir?
+  □ Un NÚMERO (precio, temperatura, grasa) → REGRESIÓN
+  □ UNA DE 2 CLASES (Sí/No, Spam/No) → BINARIA
+  □ UNA DE 3+ CLASES (Iris, Dígitos 0-9) → MULTICLASE
+
+Pregunta B: ¿Necesitas comparar 2 modelos?
+  □ Sí, quiero explorar qué modelo es mejor → CON COMPARACIÓN
+  □ No, ya sé qué modelo usar → SIN COMPARACIÓN
+
+PASO 2: Intersecta tus respuestas
+──────────────────────────────────
+
+            │ CON COMPARACIÓN      │ SIN COMPARACIÓN
+────────────┼──────────────────────┼────────────────────
+REGRESIÓN   │ Plantilla_Regresion  │ Plantilla_Regresion
+            │ .txt                 │ _UnModelo.txt
+────────────┼──────────────────────┼────────────────────
+BINARIA     │ Plantilla_Clasif...  │ Plantilla_Clasif...
+            │ _Binaria.txt         │ _Binaria_UnModelo.txt
+────────────┼──────────────────────┼────────────────────
+MULTICLASE  │ Plantilla_Clasif...  │ Plantilla_Clasif...
+            │ _Multiclase.txt      │ _Multiclase_UnModelo.txt
+────────────┴──────────────────────┴────────────────────
+
+PASO 3: Abre la plantilla elegida
+──────────────────────────────────
+
+Lee la SECCIÓN A y SECCIÓN C.
+
+PASO 4: Rellena los {{VALORES}}
+─────────────────────────────────
+
+Sección A:
+  - NOMBRE_PROYECTO
+  - OBJETIVO
+  - ARCHIVO_CSV (tu dataset)
+  - NÚMERO de registros
+  - Features (variables de entrada)
+  - VARIABLE_OBJETIVO (lo que quieres predecir)
+  - MODELO(S) a usar
+  - CRITERIOS de éxito (métricas objetivo)
+
+PASO 5: Copia la SECCIÓN C (Prompt Principal)
+──────────────────────────────────────────────
+
+Entero. Completo. Sin cortar nada.
+
+PASO 6: Pégalo en ChatGPT/Claude/Copilot
+─────────────────────────────────────────
+
+La IA creará tu notebook Jupyter completo y listo para ejecutar.
+
+================================================================================
+ATAJOS: CASOS COMUNES
+================================================================================
+
+✓ QUIERO PREDECIR PRECIO DE CASAS Y COMPARAR 2 MODELOS
+  → Usa: Plantilla_Regresion.txt
+  → Modelos: Random Forest vs XGBoost Regressor
+
+✓ QUIERO CLASIFICAR EMAILS COMO SPAM (solo 1 modelo, ya elegí XGBoost)
+  → Usa: Plantilla_Clasificacion_Binaria_UnModelo.txt
+  → Modelo: XGBoost Classifier
+
+✓ QUIERO CLASIFICAR FLORES IRIS Y VER CUÁL DE 2 MODELOS ES MEJOR
+  → Usa: Plantilla_Clasificacion_Multiclase.txt
+  → Modelos: Random Forest vs XGBoost Classifier
+
+✓ QUIERO PREDECIR GRASA CORPORAL SIN COMPARAR (solo Random Forest)
+  → Usa: Plantilla_Regresion_UnModelo.txt
+  → Modelo: Random Forest Regressor
+
+✓ QUIERO DETECCIÓN DE CHURN BINARIA Y EXPLORAR MODELOS
+  → Usa: Plantilla_Clasificacion_Binaria.txt
+  → Modelos: Logistic Regression vs XGBoost Classifier
+
+✓ TENGO 10 CLASES Y SOLO QUIERO UN MODELO PRODUCTIVO
+  → Usa: Plantilla_Clasificacion_Multiclase_UnModelo.txt
+  → Modelo: XGBoost Classifier (o el que prefieras)
+
+================================================================================
+CÓMO USAR CON UNA IA
+================================================================================
+
+Si no estás seguro qué plantilla usar:
+
+1. Copia GUIA_Elegir_Plantilla.txt completo
+2. Abre ChatGPT/Claude
+3. Pégalo en el chat
+4. Pregunta:
+
+   "Tengo un dataset de {{DESCRIPCIÓN}}.
+    Quiero predecir {{QUÉ}}.
+    {{CONTEXTO ADICIONAL}}.
+    
+    Basándote en esta guía, ¿qué plantilla debo usar?
+    ¿Por qué?"
+
+5. La IA te recomendará y te explicará
+
+================================================================================
+ESTRUCTURA DE CADA PLANTILLA
+================================================================================
+
+Cada plantilla (Plantilla_*.txt) tiene esta estructura:
+
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+  └─ Rellenar: nombre, objetivo, dataset, variables, criterios
+
+SECCIÓN B: DATA DICTIONARY
+  └─ Tabla de variables (opcional pero recomendado)
+
+SECCIÓN C: PROMPT PRINCIPAL ← COPIA ESTO COMPLETO
+  └─ Prompt listo para pegar en IA
+  └─ Contiene: todas las 6 fases CRISP-DM
+  └─ Con detalles de qué gráficos, qué análisis, qué métricas
+
+SECCIÓN D: EJEMPLOS DE RELLENOS
+  └─ Casos reales rellenados (para referencia)
+
+SECCIÓN E: CHECKLIST DE CALIDAD
+  └─ 15 puntos para verificar tu notebook
+
+SECCIÓN F: EXPLICACIÓN DE MÉTRICAS
+  └─ Qué significa R², RMSE, Accuracy, Precision, etc.
+
+SECCIÓN G: NOTAS FINALES
+  └─ Buenas prácticas, cuidados, limitaciones
+
+================================================================================
+6 FASES CRISP-DM (ESTRUCTURA COMÚN)
+================================================================================
+
+Todas las plantillas siguen este flujo:
+
+FASE 0: INTRODUCCIÓN
+  • Librerías y setup
+  • Data dictionary
+  • Explicación del modelo
+
+FASE 1: BUSINESS UNDERSTANDING
+  • ¿Por qué es importante el problema?
+  • ¿Cuáles son los criterios de éxito?
+  • Cargar dataset
+
+FASE 2: DATA UNDERSTANDING
+  • Exploración: distribuciones, correlaciones
+  • Detección de outliers
+  • Análisis visual completo
+
+FASE 3: DATA PREPARATION
+  • Limpieza: nulos, duplicados
+  • Feature engineering
+  • Selección de features
+  • Train/test split
+  • Normalización
+
+FASE 4: MODELING
+  • Entrenar modelo(s)
+  • Búsqueda de hiperparámetros
+  • Validación cruzada
+
+FASE 5: EVALUATION
+  • Métricas finales
+  • Análisis de residuos (regresión) o matriz confusión (clasificación)
+  • Feature importance
+
+FASE 6: DEPLOYMENT
+  • Modelo final
+  • Predictor interactivo
+  • Conclusiones
+
+================================================================================
+DIFERENCIAS CLAVE ENTRE PLANTILLAS
+================================================================================
+
+REGRESIÓN vs BINARIA vs MULTICLASE:
+
+Regresión:
+  • Predices: número continuo (infinitas posibilidades)
+  • Ejemplo: 35.7, 125.5, 99.2
+  • Métrica clave: R², RMSE, MAE
+  • Gráfico especial: scatter plot predicciones vs reales
+  • Análisis: residuos, normalidad, heterocedasticidad
+
+Binaria:
+  • Predices: UNA DE 2 OPCIONES (Sí/No, Positivo/Negativo)
+  • Ejemplo: Spam, No Spam
+  • Métrica clave: AUC-ROC, Precision, Recall, F1
+  • Gráfico especial: matriz confusión 2×2, curva ROC
+  • Análisis: falsos positivos vs falsos negativos
+
+Multiclase:
+  • Predices: UNA DE 3+ OPCIONES (A, B, C, D, ...)
+  • Ejemplo: Setosa, Versicolor, Virginica
+  • Métrica clave: Macro-F1, Weighted-F1, Accuracy
+  • Gráfico especial: matriz confusión N×N, clasificación por clase
+  • Análisis: qué clases se confunden, desempeño por clase
+
+CON COMPARACIÓN vs SIN COMPARACIÓN:
+
+Con comparación:
+  • Entrenar 2 modelos
+  • Mostrar métricas lado a lado
+  • Gráficos comparativos
+  • Más código, más análisis
+  • Mejor para: exploración y decisión
+
+Sin comparación:
+  • Entrenar 1 modelo
+  • Enfoque en ese modelo
+  • Menos complejidad
+  • Menos líneas de código
+  • Mejor para: producción, modelo conocido
+
+================================================================================
+REQUISITOS ANTES DE USAR
+================================================================================
+
+□ Dataset listo (CSV o formato soportado)
+□ Variables identificadas (features + target)
+□ Objetivo claro (¿qué predecir?)
+□ Criterios de éxito definidos (¿qué métricas objetivo?)
+□ (Opcional) Modelos elegidos (si usas sin comparación)
+□ Python 3.8+ con librerías: pandas, numpy, scikit-learn, matplotlib, seaborn
+□ XGBoost/otros si vas a usarlos
+
+================================================================================
+NOMENCLATURA DE ARCHIVOS
+================================================================================
+
+Plantilla_{{TIPO}}_{{MODALIDAD}}.txt
+
+{{TIPO}}:
+  • Regresion
+  • Clasificacion_Binaria
+  • Clasificacion_Multiclase
+
+{{MODALIDAD}}:
+  • (vacío) = Con comparación de 2 modelos
+  • _UnModelo = Solo 1 modelo, sin comparación
+
+Ejemplos:
+  • Plantilla_Regresion.txt = Regresión CON comparación
+  • Plantilla_Regresion_UnModelo.txt = Regresión SIN comparación
+  • Plantilla_Clasificacion_Binaria.txt = Binaria CON comparación
+  • Plantilla_Clasificacion_Binaria_UnModelo.txt = Binaria SIN comparación
+
+================================================================================
+¿NECESITAS AYUDA?
+================================================================================
+
+Si tienes dudas:
+
+1. Lee GUIA_Elegir_Plantilla.txt → árbol de decisión claro
+2. Abre la plantilla elegida → lee ejemplos (SECCIÓN D)
+3. Copia SECCIÓN C y pégalo en una IA → el modelo expande el prompt
+4. Comparte esta carpeta con un colega o profesor → pueden ayudarte
+
+================================================================================
+PRÓXIMOS PASOS
+================================================================================
+
+1. ✓ Leer este índice (HECHO)
+2. ✓ Leer GUIA_Elegir_Plantilla.txt
+3. ✓ Elegir tu plantilla usando el árbol de decisión
+4. ✓ Abrir la plantilla elegida
+5. ✓ Rellenar SECCIÓN A con TUS DATOS
+6. ✓ Copiar SECCIÓN C COMPLETO
+7. ✓ Pegar en ChatGPT/Claude
+8. ✓ Recibir notebook Jupyter completo
+9. ✓ Ejecutar notebook
+10. ✓ ¡Análisis CRISP-DM hecho!
+
+================================================================================
+INFORMACIÓN DE VERSIÓN
+================================================================================
+
+Versión: 1.0
+Fecha: Mayo 2026
+Basado en: Análisis detallado del notebook Body Performance
+Metodología: CRISP-DM (6 fases)
+Formatos soportados: CSV, pandas DataFrames
+Lenguaje: Python 3.8+
+Librerías: sklearn, xgboost, pandas, numpy, matplotlib, seaborn, joblib
+
+Plantillas incluidas: 6
+Total de archivos: 7 (6 plantillas + 1 guía + 1 índice)
+
+================================================================================
+FIN DEL ÍNDICE
+================================================================================
+
+→ COMIENZA POR LEER: GUIA_Elegir_Plantilla.txt
+→ LUEGO: Elige tu plantilla usando el árbol de decisión
+→ FINALMENTE: Usa la plantilla para crear tu notebook
+
+¡Buena suerte con tu proyecto de ML! 🚀

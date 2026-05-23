@@ -1,0 +1,294 @@
+================================================================================
+PLANTILLA DE PROMPTS PARA REGRESIÓN (UN MODELO) - CRISP-DM
+================================================================================
+Especializada para problemas donde predices un NÚMERO CONTINUO con UN SOLO MODELO.
+NO hay comparación con otro modelo. Solo entrenar, evaluar y desplegar.
+
+INSTRUCCIONES DE USO:
+====================
+1. Reemplaza todos los {{VALORES}} con tus datos específicos
+2. Copia el PROMPT PRINCIPAL (Sección C) completo
+3. Pégalo en ChatGPT, Claude o Copilot
+4. Recibirás un notebook con todas las fases CRISP-DM (sin comparaciones)
+
+================================================================================
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+================================================================================
+
+PROYECTO: {{NOMBRE_PROYECTO}}
+OBJETIVO: {{DESCRIPCIÓN DEL OBJETIVO}}
+
+DATASET PRINCIPAL:
+  - Archivo: {{ARCHIVO_CSV.csv}}
+  - Registros: {{NÚMERO}}
+  - Features: {{var1, var2, var3, ...}}
+  - Target: {{VARIABLE_OBJETIVO}} (rango: {{MIN}} - {{MAX}})
+
+MODELO A USAR:
+  - Nombre: {{MODELO (ej: XGBoost Regressor, Random Forest, etc.)}}
+  - Justificación: {{¿Por qué elegiste este modelo?}}
+
+CRITERIOS DE ÉXITO:
+  - R² ≥ {{VALOR}}
+  - RMSE ≤ {{VALOR}}
+  - MAE ≤ {{VALOR}}
+
+================================================================================
+SECCIÓN B: DATA DICTIONARY
+================================================================================
+
+| Feature | Tipo | Descripción | Unidad | Rango |
+|---------|------|-------------|--------|-------|
+| {{VAR1}} | {{número}} | {{Descripción}} | {{Unidad}} | {{Rango}} |
+| **{{TARGET}}** | **número** | **VARIABLE A PREDECIR** | {{Unidad}} | {{Rango}} |
+
+================================================================================
+SECCIÓN C: PROMPT PRINCIPAL (COPIAR COMPLETO)
+================================================================================
+
+---COMIENZA AQUÍ---
+
+Crea un **Jupyter Notebook completo** que prediga {{VARIABLE_OBJETIVO}} usando 
+{{MODELO}} según la metodología **CRISP-DM** (6 fases).
+
+### ESPECIFICACIONES:
+
+**Proyecto:** {{NOMBRE_PROYECTO}}
+**Dataset:** {{ARCHIVO_CSV}} (~{{NÚMERO}} registros)
+**Features:** {{var1, var2, var3, ...}}
+**Target:** {{VARIABLE_OBJETIVO}} (rango: {{MIN}}-{{MAX}})
+**Modelo:** {{MODELO}}
+**Justificación del modelo:** {{¿Por qué? Mencioná ventajas}}
+**Criterios:** R² ≥ {{VALOR}}, RMSE ≤ {{VALOR}}, MAE ≤ {{VALOR}}
+
+### ESTRUCTURA (6 FASES CRISP-DM):
+
+#### FASE 0: INTRODUCCIÓN
+- 📌 Markdown: Título, estudiante, objetivo
+- 📌 Markdown: ¿Qué es CRISP-DM? Tabla con 6 fases
+- 📌 Markdown: Data Dictionary
+- 💻 Código: Importar librerías necesarias
+- 📌 Markdown: Justificación de {{MODELO}} (ventajas, cuándo usar, limitaciones)
+
+#### FASE 1: BUSINESS UNDERSTANDING
+- 📌 "El Problema": ¿Por qué es importante predecir {{VARIABLE_OBJETIVO}}?
+- 📌 "Variables Disponibles": Describir cada feature
+- 📌 "Criterios de Éxito": Tabla métrica | objetivo | interpretación
+- 💻 Cargar dataset: pd.read_csv(), .shape, .columns, .head(10)
+
+#### FASE 2: DATA UNDERSTANDING
+
+**2.1 Carga y estructura:**
+- 💻 df.dtypes, df.describe().round(2)
+- 📌 Interpretación
+
+**2.2 Calidad:**
+- 💻 Nulos, duplicados, tipos
+
+**2.3 Distribución del Target:**
+- 💻 Histograma + estadísticos (media, mediana, desv. est., asimetría, curtosis)
+- 💻 ¿Es simétrico? ¿Normal?
+
+**2.4 Distribución de todas las features numéricas:**
+- 💻 Grid de histogramas (4 columnas)
+
+**2.5 Matriz de correlación:**
+- 💻 Heatmap triangular
+- 💻 Gráfico barras: features ordenadas por |correlación| con target
+- 📌 Top features, correlaciones sorprendentes
+
+**2.6 Scatter plots Top 5 Features vs Target:**
+- 💻 5 subplots lado a lado + línea de tendencia
+- 📌 ¿Relaciones lineales? ¿Dispersión?
+
+**2.7 Outliers (IQR):**
+- 💻 Tabla: feature | N_outliers | %
+- 💻 Grid de boxplots
+
+#### FASE 3: DATA PREPARATION
+
+**3.1 Limpieza:**
+- 💻 Eliminar duplicados
+- 💻 Codificar categorías si existen
+
+**3.2 Capping IQR:**
+- 💻 Función iqr_cap() aplicada a features
+
+**3.3 Selección de Features:**
+- 💻 Filtrar: |r| ≥ 0.20
+- 💻 Mostrar SELECCIONADAS vs DESCARTADAS
+
+**3.4 Multicolinealidad (VIF):**
+- 💻 Tabla: feature | VIF
+- 📌 Si VIF > 10: eliminar
+
+**3.5 División Train/Test:**
+- 💻 train_test_split(test_size=0.20, random_state={{SEED}})
+- 💻 Mostrar distribución de target en train vs test
+
+**3.6 Estandarización:**
+- 💻 StandardScaler en Pipeline
+
+#### FASE 4: MODELING
+
+**4.1 Justificación del modelo:**
+- 📌 "¿Por qué {{MODELO}}?" (2–3 párrafos explicando ventajas)
+
+**4.2 Pipeline:**
+- 💻 Pipeline: StandardScaler → {{MODELO}}
+
+**4.3 Búsqueda de Hiperparámetros:**
+- 📌 Explicar qué son hiperparámetros
+- 💻 Definir param_grid para {{MODELO}} (5–8 parámetros clave)
+- 💻 RandomizedSearchCV(n_iter=20, cv=5)
+- 💻 Mostrar best_params_ y best_score_
+
+**4.4 Validación Cruzada:**
+- 💻 cross_val_score(cv=5)
+- 💻 Mostrar media ± desv. est.
+
+#### FASE 5: EVALUATION
+
+**5.1 Métricas en Test Set:**
+- 💻 Predicciones: y_pred = model.predict(X_test)
+- 💻 Calcular: R², RMSE, MAE
+- 💻 Tabla: Métrica | Valor | Objetivo | ¿Se cumple?
+- 📌 ¿Se cumplieron criterios de éxito?
+
+**5.2 Análisis Residual:**
+- 💻 Grid 2×2:
+  * Histograma residuos (¿normal? ¿centrado en 0?)
+  * Residuos vs Y_pred (¿patrones? ¿heterocedasticidad?)
+  * Q-Q plot (¿normalidad en colas?)
+  * Residuos ordenados (¿aleatoriedad?)
+- 📌 Interpretar violaciones de supuestos
+
+**5.3 Predicciones vs Valores Reales:**
+- 💻 Scatter: y_test vs y_pred
+- 💻 Línea diagonal (y = x, predicción perfecta)
+- 💻 Mostrar RMSE en el plot
+
+**5.4 Feature Importance:**
+- 💻 Barras horizontales Top 10 features
+- 📌 Qué variables son más importantes?
+
+**5.5 Residuos por Feature:**
+- 💻 Scatter: cada top 3 feature vs residuos
+- 📌 ¿Hay patrones no lineales?
+
+#### FASE 6: DEPLOYMENT
+
+**6.1 Modelo Final:**
+- 💻 Entrenar con TODO el dataset (train + test)
+- 💻 Guardar: joblib.dump(model, 'modelo_{{PROYECTO}}.pkl')
+
+**6.2 Predictor Interactivo:**
+- 💻 Función que acepte feature values → retorne predicción ± intervalo
+- 💻  3–5 ejemplos realistas
+- 📌 Cómo usar en práctica
+
+**6.3 Conclusiones:**
+- 📌 "Resultados Finales": ¿Se cumplieron criterios?
+- 📌 "Errores Típicos": RMSE/MAE en unidades interpretables
+- 📌 "Features Más Importantes": Top 3
+- 📌 "Limitaciones": ¿Qué no sabe hacer?
+- 📌 "Trabajo Futuro": más datos, nuevas features, otros modelos
+
+### REQUISITOS TÉCNICOS:
+
+**Código:**
+- Comentarios inline
+- print() con resumen
+- Sin errores
+
+**Markdown:**
+- Encabezados jerárquicos
+- Tablas
+- > para énfasis
+
+**Visualizaciones:**
+- Títulos, ejes, leyenda
+- Colores consistentes
+- Fuente legible
+
+---FIN DEL PROMPT---
+
+================================================================================
+SECCIÓN D: EJEMPLOS DE RELLENOS
+================================================================================
+
+EJEMPLO 1: Body Performance (XGBoost)
+---
+NOMBRE_PROYECTO = Predicción de Grasa Corporal
+OBJETIVO = Predecir grasa corporal usando XGBoost
+ARCHIVO_CSV = bodyPerformance.csv
+NÚMERO = 13393
+var1, var2, ... = age, gender, height_cm, weight_kg, ...
+VARIABLE_OBJETIVO = body fat_%
+MIN = 3%
+MAX = 78%
+MODELO = XGBoost Regressor
+JUSTIFICACIÓN = XGBoost es rápido, maneja interacciones bien, captura patrones no lineales
+R² ≥ 0.70
+RMSE ≤ 4.0%
+MAE ≤ 3.0%
+
+EJEMPLO 2: Precios de Casas (Random Forest)
+---
+NOMBRE_PROYECTO = Predicción de Precios de Viviendas
+OBJETIVO = Predecir precio usando Random Forest
+ARCHIVO_CSV = house_prices.csv
+NÚMERO = 1460
+var1, var2, ... = area_sqft, bedrooms, bathrooms, year_built
+VARIABLE_OBJETIVO = price
+MIN = $34000
+MAX = $755000
+MODELO = Random Forest Regressor
+JUSTIFICACIÓN = RF es robusto, maneja features mixtas, interpetable
+R² ≥ 0.75
+RMSE ≤ 60000
+MAE ≤ 40000
+
+================================================================================
+SECCIÓN E: CHECKLIST
+================================================================================
+
+□ ¿Notebook ejecuta sin errores de principio a fin?
+□ ¿Tiene las 6 fases CRISP-DM?
+□ ¿Cada celda está comentada?
+□ ¿Hay mínimo 1 gráfico por subsección?
+□ ¿Gráficos tienen título, ejes, leyenda?
+□ ¿Se justifica la elección del modelo?
+□ ¿Se muestran R², RMSE, MAE?
+□ ¿Se analiza normalidad de residuos?
+□ ¿Se reporta feature importance?
+□ ¿Hay análisis scatter plot (predicciones vs reales)?
+□ ¿Se explica por qué se descartaron features?
+□ ¿Hay predictor interactivo?
+□ ¿Conclusiones responden si se cumplieron criterios?
+□ ¿Se propone trabajo futuro?
+
+================================================================================
+SECCIÓN F: NOTAS FINALES
+================================================================================
+
+1. **Selección de {{MODELO}}:** Justifica por qué elegiste este modelo
+   - ¿Dataset grande o pequeño?
+   - ¿Features numéricas, categóricas, mixtas?
+   - ¿Necesita interpretabilidad?
+
+2. **Si dataset < 100:** Usa 10-fold CV en lugar de 80/20
+
+3. **Si target muy sesgado:** Considera transformación logarítmica
+
+4. **RandomizedSearchCV:** 20 iteraciones es punto de partida
+
+5. **Feature engineering:** Crea features basadas en dominio
+
+6. **Siempre visualiza:** Residuos revelan problemas que métrica no muestra
+
+7. **Intervalo de confianza:** En deployment, muestra predicción ± RMSE
+
+================================================================================
+FIN DE LA PLANTILLA - REGRESIÓN (UN MODELO)
+================================================================================

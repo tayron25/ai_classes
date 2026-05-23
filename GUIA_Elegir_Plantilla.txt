@@ -1,0 +1,421 @@
+================================================================================
+GUÍA COMPLETA PARA ELEGIR LA PLANTILLA CORRECTA
+================================================================================
+
+Este archivo te ayuda a ELEGIR cuál de las 6 plantillas usar para tu proyecto
+de Machine Learning. Comparte esta guía CON UNA IA para que te ayude a decidir.
+
+RESUMEN DE LAS 6 PLANTILLAS DISPONIBLES:
+
+1. 🔵 Plantilla_Regresion.txt
+   - Para: Predecir un NÚMERO (precio, temperatura, grasa corporal)
+   - Modelos: Compara 2 modelos (ej: Random Forest vs XGBoost)
+   - Comparación: Sí (lado a lado)
+   - Mejor cuando: Quieres probar 2 algoritmos
+
+2. 🔴 Plantilla_Clasificacion_Binaria.txt
+   - Para: Predecir UNA DE 2 CLASES (Sí/No, Churn/No Churn, Spam/No Spam)
+   - Modelos: Compara 2 modelos
+   - Comparación: Sí (matriz confusión, ROC curve para ambos)
+   - Mejor cuando: Quieres comparar algoritmos en clasificación binaria
+
+3. 🟣 Plantilla_Clasificacion_Multiclase.txt
+   - Para: Predecir UNA DE 3+ CLASES (Iris: Setosa/Versicolor/Virginica, Dígitos 0-9)
+   - Modelos: Compara 2 modelos
+   - Comparación: Sí (matriz confusión, ROC por clase para ambos)
+   - Mejor cuando: Quieres comparar algoritmos en multiclase
+
+4. 🟢 Plantilla_Regresion_UnModelo.txt
+   - Para: Predecir un NÚMERO (precio, temperatura, grasa corporal)
+   - Modelos: Solo 1 modelo elegido
+   - Comparación: No
+   - Mejor cuando: Ya decidiste qué algoritmo usar
+
+5. 🟡 Plantilla_Clasificacion_Binaria_UnModelo.txt
+   - Para: Predecir UNA DE 2 CLASES
+   - Modelos: Solo 1 modelo elegido
+   - Comparación: No
+   - Mejor cuando: Ya elegiste tu clasificador
+
+6. 🟠 Plantilla_Clasificacion_Multiclase_UnModelo.txt
+   - Para: Predecir UNA DE 3+ CLASES
+   - Modelos: Solo 1 modelo elegido
+   - Comparación: No
+   - Mejor cuando: Ya decidiste el algoritmo para multiclase
+
+================================================================================
+SECCIÓN 1: ÁRBOL DE DECISIÓN RÁPIDO
+================================================================================
+
+PREGUNTA 1: ¿QUÉ QUIERES PREDECIR?
+
+┌─────────────────────────────────────────┐
+│ ¿Un NÚMERO? (Regresión)                │
+│ ¿Una CLASE? (Clasificación)            │
+└─────────────────────────────────────────┘
+     │                                │
+     ↓ NÚMERO                         ↓ CLASE
+   REGRESIÓN                        ¿Cuántas clases?
+     │                               │
+     │                        ┌──────┴──────┐
+     │                        ↓             ↓
+     │                        2 clases      3+ clases
+     │                        BINARIA       MULTICLASE
+     │
+     ├─ ¿Comparar 2 modelos?  ├─ ¿Comparar 2 modelos?  ├─ ¿Comparar 2 modelos?
+     │  │                     │  │                    │  │
+     │  ├─ Sí → Plantilla_    │  ├─ Sí →             │  ├─ Sí →
+     │  │  Regresion.txt      │  │  Plantilla_       │  │  Plantilla_
+     │  │                     │  │  Clasificacion_   │  │  Clasificacion_
+     │  └─ No → Plantilla_    │  │  Binaria.txt      │  │  Multiclase.txt
+     │     Regresion_         │  │                    │  │
+     │     UnModelo.txt       │  └─ No →             │  └─ No →
+     │                        │     Plantilla_       │     Plantilla_
+     │                        │     Clasificacion_   │     Clasificacion_
+     │                        │     Binaria_         │     Multiclase_
+     │                        │     UnModelo.txt     │     UnModelo.txt
+     │
+     REGRESIÓN → 2 opciones
+                  ├ Con comparación: Plantilla_Regresion.txt
+                  └ Sin comparación: Plantilla_Regresion_UnModelo.txt
+
+     BINARIA → 2 opciones
+              ├ Con comparación: Plantilla_Clasificacion_Binaria.txt
+              └ Sin comparación: Plantilla_Clasificacion_Binaria_UnModelo.txt
+
+     MULTICLASE → 2 opciones
+                 ├ Con comparación: Plantilla_Clasificacion_Multiclase.txt
+                 └ Sin comparación: Plantilla_Clasificacion_Multiclase_UnModelo.txt
+
+================================================================================
+SECCIÓN 2: DEFINICIONES CLARAS
+================================================================================
+
+¿QUÉ ES REGRESIÓN?
+─────────────────
+Predices un **número continuo** (puede tomar infinitos valores dentro de un rango).
+
+Ejemplos:
+✓ Precio de vivienda: $50,000, $125,500.50, $999,999
+✓ Temperatura: 20.5°C, 37.8°C
+✓ Grasa corporal: 15.3%, 28.9%
+✓ Salario predicho: $45,000, $78,500
+✓ Velocidad del viento: 12.3 km/h
+
+**Métrica principal:** R² (cuánto del problema explica el modelo)
+
+---
+
+¿QUÉ ES CLASIFICACIÓN BINARIA?
+──────────────────────────────
+Predices **UNA DE 2 CLASES** (solo dos opciones).
+
+Ejemplos:
+✓ ¿Sobrevivió al Titanic? → Sí / No
+✓ ¿Es spam? → Spam / Legítimo
+✓ ¿Cliente churnará? → Churn / No Churn
+✓ ¿Tiene diabetes? → Diabético / No Diabético
+✓ ¿Ganará el partido? → Gana / Pierde
+
+**Métrica principal:** AUC-ROC o Accuracy
+
+---
+
+¿QUÉ ES CLASIFICACIÓN MULTICLASE?
+──────────────────────────────────
+Predices **UNA DE 3+ CLASES** (más de 2 opciones).
+
+Ejemplos:
+✓ Especie de flor iris → Setosa / Versicolor / Virginica (3 clases)
+✓ Dígito manuscrito → 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 (10 clases)
+✓ Sentimiento → Negativo / Neutro / Positivo (3 clases)
+✓ Tipo de frutas → Manzana / Naranja / Plátano / Pera (4 clases)
+✓ Nivel de riesgo → Bajo / Medio / Alto / Crítico (4 clases)
+
+**Métrica principal:** Accuracy o Macro-F1
+
+================================================================================
+SECCIÓN 3: COMPARAR 2 MODELOS O NO
+================================================================================
+
+¿CUÁNDO USAR PLANTILLAS CON COMPARACIÓN? (Plantilla_*.txt sin "UnModelo")
+────────────────────────────────────────
+
+Usa estas si:
+✓ No sabes cuál modelo es mejor para tu caso
+✓ Quieres experimentar y comparar (ej: RF vs XGBoost)
+✓ Necesitas justificar por qué elegiste ese modelo
+✓ Es un proyecto académico/investigación
+✓ Tienes tiempo de entrenar dos modelos
+
+Modelos típicos a comparar:
+───────────────────────────
+REGRESIÓN:
+  • Random Forest vs XGBoost
+  • Linear Regression vs Gradient Boosting
+  • SVR vs Neural Network
+
+CLASIFICACIÓN BINARIA:
+  • Logistic Regression vs XGBoost Classifier
+  • Random Forest vs XGBoost Classifier
+  • SVM vs Logistic Regression
+
+CLASIFICACIÓN MULTICLASE:
+  • Random Forest vs XGBoost Classifier
+  • Neural Network vs Gradient Boosting
+  • SVM Multiclase vs Random Forest
+
+---
+
+¿CUÁNDO USAR PLANTILLAS SIN COMPARACIÓN? (Plantilla_*_UnModelo.txt)
+─────────────────────────────────────────
+
+Usa estas si:
+✓ Ya sabes cuál modelo quieres usar
+✓ Tu framework/empresa tiene un algoritmo estándar
+✓ Tienes limitaciones de tiempo/computo
+✓ Solo necesitas un modelo productivo
+✓ Ya comparaste modelos antes (en otro proyecto similar)
+
+Casos comunes:
+──────────────
+• "Usamos siempre XGBoost para regresión en nuestra empresa"
+• "El profesor dijo que usemos Random Forest"
+• "La literatura recomienda LSTM para esta tarea"
+• "Ya probé varios modelos y XGBoost fue el mejor"
+• "Solo necesito un prototipo rápido con cualquier modelo"
+
+================================================================================
+SECCIÓN 4: EJEMPLOS PRÁCTICOS PARA DECIDIR
+================================================================================
+
+CASO 1: Proyecto Escolar - Predicción de Precios
+─────────────────────────────────────────────────
+Situación:
+  • Dataset: precios de viviendas
+  • Objetivo: predecir precio (NÚMERO = REGRESIÓN)
+  • Requisito: "Compara 2 modelos y elige el mejor"
+  
+PLANTILLA A USAR: ✓ Plantilla_Regresion.txt
+  • Con comparación Random Forest vs XGBoost
+  • Ambos modelos lado a lado en toda la estructura
+
+---
+
+CASO 2: Sistema de Detección de Spam
+─────────────────────────────────────
+Situación:
+  • Dataset: emails
+  • Objetivo: clasificar como Spam / Legítimo (2 CLASES = BINARIA)
+  • Requisito: "Ya sabemos que XGBoost es mejor para este caso"
+  
+PLANTILLA A USAR: ✓ Plantilla_Clasificacion_Binaria_UnModelo.txt
+  • Solo XGBoost Classifier
+  • Menos código, más enfocado
+  • Métrica clave: AUC-ROC (importante en spam)
+
+---
+
+CASO 3: Diagnóstico Médico - 5 Tipos de Cáncer
+───────────────────────────────────────────────
+Situación:
+  • Dataset: biopsias
+  • Objetivo: clasificar en 5 tipos de cáncer (5 CLASES = MULTICLASE)
+  • Requisito: "Quiero intentar Random Forest y XGBoost para ver cuál es mejor"
+  
+PLANTILLA A USAR: ✓ Plantilla_Clasificacion_Multiclase.txt
+  • Con comparación RF vs XGBoost Classifier
+  • Importante: mostrar matriz de confusión para ver qué tipos se confunden
+
+---
+
+CASO 4: Reconocimiento de Dígitos Manuscritos
+──────────────────────────────────────────────
+Situación:
+  • Dataset: MNIST (10,000 imágenes de dígitos 0-9)
+  • Objetivo: clasificar en 10 clases (MULTICLASE)
+  • Requisito: "Proyecto rápido, solo usa CNN o Random Forest"
+  
+PLANTILLA A USAR: ✓ Plantilla_Clasificacion_Multiclase_UnModelo.txt
+  • Enfocado en 1 modelo
+  • Más rápido de ejecutar
+
+---
+
+CASO 5: Predicción de Grasa Corporal
+────────────────────────────────────
+Situación:
+  • Dataset: medidas físicas de 13,000 personas
+  • Objetivo: predecir % de grasa (NÚMERO = REGRESIÓN)
+  • Requisito: "Solo necesito un modelo, usa el que sea"
+  
+PLANTILLA A USAR: ✓ Plantilla_Regresion_UnModelo.txt
+  • Enfocado en 1 modelo
+  • Métrica clave: R² y RMSE
+
+---
+
+CASO 6: Análisis de Sentiment en Reviews
+────────────────────────────────────────
+Situación:
+  • Dataset: 10,000 reviews de películas
+  • Objetivo: clasificar en Negativo / Neutro / Positivo (3 CLASES = MULTICLASE)
+  • Requisito: "Quiero probar varios modelos de NLP para comparar"
+  
+PLANTILLA A USAR: ✓ Plantilla_Clasificacion_Multiclase.txt
+  • Con comparación (ej: Logistic Regression vs SVM)
+  • Visualizar matriz confusión para ver confusiones comunes
+
+================================================================================
+SECCIÓN 5: TABLA COMPARATIVA VISUAL
+================================================================================
+
+┌──────────────────────┬──────────────────┬──────────────────┬──────────────────┐
+│ PLANTILLA            │ PROBLEMA         │ COMPARACIÓN      │ MEJOR PARA       │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Regresion            │ Número continuo  │ 2 modelos (RF vs │ Exploración +    │
+│                      │                  │ XGBoost)         │ Decisión         │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Regresion_UnModelo   │ Número continuo  │ 1 modelo elegido │ Modelo elegido   │
+│                      │                  │                  │ + Producción     │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Clasificacion_        │ 2 clases         │ 2 modelos        │ Exploración +    │
+│ Binaria              │ (Sí/No)          │                  │ Decisión en 2c   │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Clasificacion_        │ 2 clases         │ 1 modelo elegido │ Modelo elegido   │
+│ Binaria_UnModelo     │ (Sí/No)          │                  │ + Producción 2c  │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Clasificacion_        │ 3+ clases        │ 2 modelos        │ Exploración +    │
+│ Multiclase           │ (Iris, Dígitos)  │                  │ Decisión multiC  │
+├──────────────────────┼──────────────────┼──────────────────┼──────────────────┤
+│ Clasificacion_        │ 3+ clases        │ 1 modelo elegido │ Modelo elegido   │
+│ Multiclase_UnModelo  │                  │                  │ + Producción mC  │
+└──────────────────────┴──────────────────┴──────────────────┴──────────────────┘
+
+CARACTERÍSTICAS POR PLANTILLA:
+
+┌─────────────────────────────┬──────────────────────────────────┬──────────────┐
+│ ASPECTO                     │ CON COMPARACIÓN                  │ UN MODELO    │
+├─────────────────────────────┼──────────────────────────────────┼──────────────┤
+│ Líneas de código aprox.     │ 2000–2500                        │ 1200–1500    │
+│ Tiempo de ejecución         │ 10–20 minutos (2 modelos)        │ 5–10 minutos │
+│ Número de gráficos          │ 15–20                            │ 10–15        │
+│ Comparación visual          │ Sí (lado a lado)                 │ No           │
+│ Matriz confusión (clase.)   │ 2 matrices                       │ 1 matriz     │
+│ Feature importance          │ Para ambos modelos               │ Para 1       │
+│ Conclusión                  │ "Modelo X es mejor"              │ "Desempeño"  │
+│ Documentación necesaria     │ Mayor (justificar elección)      │ Menor        │
+└─────────────────────────────┴──────────────────────────────────┴──────────────┘
+
+================================================================================
+SECCIÓN 6: PREGUNTAS PARA DECIDIR
+================================================================================
+
+Responde estas preguntas, y sabrás qué plantilla usar:
+
+PREGUNTA 1: ¿Qué queremos predecir?
+───────────────────────────────────
+□ Un número continuo (precio, temperatura, grasa) → REGRESIÓN
+□ Una de 2 clases (Sí/No, Spam/No) → CLASIFICACIÓN BINARIA
+□ Una de 3+ clases (Iris, Dígitos) → CLASIFICACIÓN MULTICLASE
+
+→ Si respondiste A: Ve a PREGUNTA 2
+→ Si respondiste B: Ve a PREGUNTA 3
+→ Si respondiste C: Ve a PREGUNTA 4
+
+PREGUNTA 2 (Regresión): ¿Necesitas comparar 2 modelos?
+──────────────────────
+□ Sí, quiero ver Random Forest vs XGBoost → Plantilla_Regresion.txt
+□ No, ya sé qué modelo usar → Plantilla_Regresion_UnModelo.txt
+
+PREGUNTA 3 (Binaria): ¿Necesitas comparar 2 modelos?
+────────────────────
+□ Sí, quiero probar Logistic Regression vs XGBoost → Plantilla_Clasificacion_Binaria.txt
+□ No, ya elegí mi modelo → Plantilla_Clasificacion_Binaria_UnModelo.txt
+
+PREGUNTA 4 (Multiclase): ¿Necesitas comparar 2 modelos?
+────────────────────────
+□ Sí, quiero Random Forest vs XGBoost → Plantilla_Clasificacion_Multiclase.txt
+□ No, ya decidí el modelo → Plantilla_Clasificacion_Multiclase_UnModelo.txt
+
+================================================================================
+SECCIÓN 7: FLUJO DE DECISIÓN EN UNA LÍNEA
+================================================================================
+
+(¿Regresión? & ¿Comparar?)
+  → Ambos Sí: Plantilla_Regresion.txt
+  → Reg Sí, Comp No: Plantilla_Regresion_UnModelo.txt
+
+(¿Binaria? & ¿Comparar?)
+  → Ambos Sí: Plantilla_Clasificacion_Binaria.txt
+  → Bin Sí, Comp No: Plantilla_Clasificacion_Binaria_UnModelo.txt
+
+(¿Multiclase? & ¿Comparar?)
+  → Ambos Sí: Plantilla_Clasificacion_Multiclase.txt
+  → Multi Sí, Comp No: Plantilla_Clasificacion_Multiclase_UnModelo.txt
+
+================================================================================
+SECCIÓN 8: CÓMO USAR ESTA GUÍA CON UNA IA
+================================================================================
+
+Paso 1: Copia esta guía completa
+Paso 2: Abre ChatGPT, Claude o tu IA favorita
+Paso 3: Pégala como CONTEXTO (en el chat)
+Paso 4: Pregunta:
+
+   "Tengo un proyecto de ML donde quiero predecir {{TU_OBJETIVO}}
+    con un dataset de {{TU_DATASET}}.
+    
+    {{DESCRIBE TU SITUACIÓN}}
+    
+    ¿Cuál de las 6 plantillas debo usar?
+    ¿Por qué? 
+    ¿Cómo rellenar los {{VALORES}}?"
+
+Paso 5: La IA te recomendará la plantilla y te ayudará a completarla
+
+EJEMPLO:
+
+   "Tengo un dataset de 1000 pacientes con síntomas de diabetes.
+    Quiero predecir si tienen diabetes (Sí/No).
+    Mi profesor quiere que compare 2 modelos.
+    ¿Qué plantilla uso?"
+
+   → IA responderá: "Usa Plantilla_Clasificacion_Binaria.txt"
+
+================================================================================
+SECCIÓN 9: VALIDACIÓN FINAL
+================================================================================
+
+Antes de usar una plantilla, verifica:
+
+✓ ¿Tengo claro qué quiero predecir?
+✓ ¿Es número, 2 clases o 3+ clases?
+✓ ¿Necesito/Quiero comparar 2 modelos?
+✓ ¿Tengo el dataset listo?
+✓ ¿Sé las variables que voy a usar?
+✓ ¿Conozco el rango/valores del target?
+
+Si respondiste SÍ a todas, estás listo para usar la plantilla.
+
+================================================================================
+SECCIÓN 10: PRÓXIMOS PASOS
+================================================================================
+
+Una vez que ELEGISTE la plantilla:
+
+1. Lee la SECCIÓN A (Configuración) de la plantilla elegida
+2. Reemplaza todos los {{VALORES}} con tus datos reales
+3. Copia la SECCIÓN C (Prompt Principal) COMPLETO
+4. Pégalo en ChatGPT/Claude/Copilot
+5. El modelo generará tu notebook Jupyter completo
+6. Ejecuta el notebook y tendrás análisis CRISP-DM completo
+
+================================================================================
+FIN DE LA GUÍA
+================================================================================
+
+¿DUDAS? Comparte esta guía + tu descripción con una IA y te ayudará a elegir.
+
+Contacto: Esta guía es parte del proyecto Body Performance - CRISP-DM
+Versión: 1.0 (Mayo 2026)

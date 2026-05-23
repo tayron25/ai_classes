@@ -1,0 +1,435 @@
+================================================================================
+PLANTILLA DE PROMPTS PARA CLASIFICACIÓN BINARIA - CRISP-DM
+================================================================================
+Especializada para problemas donde predices UNA DE DOS CLASES.
+Ejemplo: Titanic (Survived/No), Spam (Spam/No Spam), Diabetes (Sí/No), etc.
+
+INSTRUCCIONES DE USO:
+====================
+1. Reemplaza todos los {{VALORES}} con tus datos específicos
+2. Copia el PROMPT PRINCIPAL (Sección C) completo
+3. Pégalo en ChatGPT, Claude o Copilot
+4. Recibirás un notebook con todas las fases CRISP-DM + gráficos para clasificación
+
+================================================================================
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+================================================================================
+
+PROYECTO: {{NOMBRE_PROYECTO}}
+OBJETIVO: {{DESCRIPCIÓN (ej: Predecir si un cliente churnará (dejará de usar el servicio))}}
+
+DATASET PRINCIPAL:
+  - Archivo: {{ARCHIVO_CSV.csv}}
+  - Registros: {{NÚMERO}} filas
+  - Features: {{var1, var2, var3, ...}}
+  - Target (2 clases): {{VARIABLE_OBJETIVO}} → {{CLASE_1}} / {{CLASE_2}}
+  - Distribución: {{CLASE_1}}: ~{{%}}%, {{CLASE_2}}: ~{{%}}%
+
+MODELOS A COMPARAR:
+  - Modelo 1: {{MODELO_1}} (ej: Logistic Regression)
+  - Modelo 2: {{MODELO_2}} (ej: XGBoost Classifier)
+
+CRITERIOS DE ÉXITO:
+  - Accuracy ≥ {{VALOR}} (% correcto global, usar si clases balanceadas)
+  - Precision ≥ {{VALOR}} (de positivos predichos, cuántos son reales)
+  - Recall ≥ {{VALOR}} (de positivos reales, cuántos predijimos)
+  - F1-Score ≥ {{VALOR}} (balance entre Precision y Recall)
+  - AUC-ROC ≥ {{VALOR}} (curva ROC, inmune al desbalance)
+
+IMPORTANTE - DESBALANCE:
+  - Si {{CLASE_1}} >> {{CLASE_2}} (ej: 95% vs 5%): Usa Precision, Recall, F1, AUC-ROC
+  - Si clases ~50/50: Puedes usar Accuracy
+  - Estrategia: stratified split, class_weight='balanced' en modelo
+
+================================================================================
+SECCIÓN B: DATA DICTIONARY
+================================================================================
+
+| Feature | Tipo | Descripción | Valores/Rango |
+|---------|------|-------------|----------------|
+| {{VAR1}} | {{número/categórica}} | {{Descripción}} | {{Rango/valores}} |
+| {{VAR2}} | {{número/categórica}} | {{Descripción}} | {{Rango/valores}} |
+| **{{TARGET}}** | **categórica** | **CLASE A PREDECIR** | {{CLASE_1}} / {{CLASE_2}} |
+
+================================================================================
+SECCIÓN C: PROMPT PRINCIPAL (COPIAR COMPLETO)
+================================================================================
+
+---COMIENZA AQUÍ---
+
+Crea un **Jupyter Notebook completo** que clasifique entre {{CLASE_1}} y {{CLASE_2}}
+usando la metodología **CRISP-DM** (6 fases). Compara {{MODELO_1}} vs {{MODELO_2}}.
+
+### ESPECIFICACIONES:
+
+**Proyecto:** {{NOMBRE_PROYECTO}}
+**Dataset:** {{ARCHIVO_CSV}} (~{{NÚMERO}} registros)
+**Features:** {{var1, var2, var3, ...}}
+**Target:** {{VARIABLE_OBJETIVO}} ({{CLASE_1}} / {{CLASE_2}})
+**Distribución:** {{CLASE_1}}: ~{{%}}% | {{CLASE_2}}: ~{{%}}% [{{DESBALANCEADO/BALANCEADO}}]
+**Modelos:** {{MODELO_1}} vs {{MODELO_2}}
+**Criterios:** Accuracy ≥ {{VALOR}}, Precision ≥ {{VALOR}}, Recall ≥ {{VALOR}}, AUC-ROC ≥ {{VALOR}}
+
+### ESTRUCTURA (6 FASES CRISP-DM):
+
+#### FASE 0: INTRODUCCIÓN
+- 📌 Markdown: Título, estudiante/proyecto, objetivo
+- 📌 Markdown: ¿Qué es CRISP-DM? Tabla con 6 fases
+- 📌 Markdown: Data Dictionary
+- 💻 Código: Importar librerías (numpy, pandas, matplotlib, seaborn, sklearn, {{MODELO_1}}, {{MODELO_2}}, joblib)
+- 📌 Markdown: Por qué cada librería
+
+#### FASE 1: BUSINESS UNDERSTANDING
+- 📌 "El Problema": ¿Por qué es importante clasificar {{VARIABLE_OBJETIVO}}?
+- 📌 "Costo de Errores": ¿Qué cuesta más? ¿Falso positivo o falso negativo?
+  - Ejemplo Spam: falso positivo (email legítimo en spam) cuesta más que falso negativo
+  - Ejemplo Churn: falso negativo (no detectar cliente que se va) cuesta más
+- 📌 "Variables Disponibles": Describir cada feature
+- 📌 "Criterios de Éxito": Tabla métrica | objetivo | interpretación
+- 📌 "¿Por qué {{MODELO_1}} y {{MODELO_2}}?": Comparación de algoritmos
+- 💻 Cargar dataset: pd.read_csv(), .shape, .columns, .head(10)
+
+#### FASE 2: DATA UNDERSTANDING
+
+**2.1 Carga y estructura:**
+- 💻 df.dtypes, df.describe()
+- 📌 Interpretación
+
+**2.2 Calidad:**
+- 💻 Nulos por columna, duplicados
+- 💻 Distribución de tipos de datos
+
+**2.3 Distribución del Target (clase):**
+- 💻 value_counts(), proporciones
+- 💻 Gráfico de barras: número de registros por clase
+- 📌 ¿Balanceado o desbalanceado? ¿Necesita estratificación?
+
+**2.4 Distribución de Features Numéricas:**
+- 💻 Grid 4 columnas de histogramas
+- 💻 Si hay variable categórica importante: boxplots separados por clase
+- 📌 ¿Diferencias visuales entre clases?
+
+**2.5 Features Numéricas vs Target (boxplots por clase):**
+- 💻 Para cada feature numérica, boxplot lado a lado: {{CLASE_1}} vs {{CLASE_2}}
+- 📌 ¿Se distinguen bien las clases por cada feature?
+
+**2.6 Matriz de Correlación:**
+- 💻 Heatmap triangular
+- 💻 Gráfico de barras: features ordenadas por |correlación| con target
+  (para clasificación, convertir target a numérico: {{CLASE_1}}=0, {{CLASE_2}}=1)
+- 📌 Top features correlacionadas
+
+**2.7 Scatter Plots Top Features vs Target:**
+- 💻 5 scatter plots lado a lado
+- 💻 Colorear: azul {{CLASE_1}}, naranja {{CLASE_2}}
+- 💻 ¿Se ven separables? ¿Hay solapamiento?
+
+**2.8 Outliers (método IQR):**
+- 💻 Tabla: feature | N_outliers | % total
+- 💻 Grid de boxplots
+- 📌 Estrategia: capping vs eliminación
+
+#### FASE 3: DATA PREPARATION
+
+**3.1 Limpieza y Codificación:**
+- 💻 Eliminar duplicados
+- 💻 Codificar target: {{CLASE_1}}→0, {{CLASE_2}}→1
+- 💻 Codificar categorías (si hay)
+- 📌 Justificar mapping
+
+**3.2 Capping de Outliers (IQR × 1.5):**
+- 💻 Función iqr_cap() aplicada a features numéricas
+- 💻 Reportar valores recortados
+- 📌 ¿Por qué no eliminar?
+
+**3.3 Selección de Features por Correlación:**
+- 💻 Calcular correlación con target para cada feature
+- 💻 Filtrar: |r| ≥ 0.15 (umbral más bajo que regresión porque clasificación es distinta)
+- 💻 Mostrar SELECCIONADAS vs DESCARTADAS
+- 📌 Justificar descartes
+
+**3.4 Multicolinealidad (VIF):**
+- 💻 Tabla: feature | VIF
+- 📌 Si VIF > 10: eliminar una de las features correlacionadas
+
+**3.5 División Train/Test con Estratificación:**
+- 💻 train_test_split(test_size=0.20, stratify=y, random_state={{SEED}})
+- 💻 Mostrar distribución de clases en train vs test
+- 📌 ¿Estratificación preservó las proporciones?
+
+**3.6 Estandarización:**
+- 💻 StandardScaler dentro de Pipeline
+- 📌 ¿Por qué importa en clasificación?
+
+#### FASE 4: MODELING
+
+**4.1 Configuración de Modelos:**
+- 📌 "¿Qué es {{MODELO_1}}?" (explicación del algoritmo)
+- 📌 "¿Qué es {{MODELO_2}}?"
+- 💻 Crear instancias con class_weight='balanced' (si desbalanceado)
+
+**4.2 Pipelines:**
+- 💻 Pipeline {{MODELO_1}}: StandardScaler → {{MODELO_1}}Classifier
+- 💻 Pipeline {{MODELO_2}}: StandardScaler → {{MODELO_2}}Classifier
+- 📌 ¿Por qué Pipeline?
+
+**4.3 Búsqueda de Hiperparámetros (RandomizedSearchCV):**
+- 💻 Definir param_grid para {{MODELO_1}}
+- 💻 RandomizedSearchCV con scoring='roc_auc' (mejor que accuracy si desbalanceado)
+- 💻 Mostrar best_params_ y best_score_
+- 💻 Repetir para {{MODELO_2}}
+- 💻 Tabla: Modelo | best_params_ | best_score_
+
+**4.4 Validación Cruzada (5-fold):**
+- 💻 cross_val_score(scoring='roc_auc')
+- 💻 Mostrar media ± desv. est.
+
+#### FASE 5: EVALUATION
+
+**5.1 Predicciones y Métricas:**
+- 💻 Predicciones: y_pred = model.predict(X_test)
+- 💻 Probabilidades: y_pred_proba = model.predict_proba(X_test)
+- 💻 Calcular:
+  * Accuracy
+  * Precision, Recall, F1 (macro y weighted si multiclase)
+  * Specificity (TN / (TN + FP))
+  * AUC-ROC
+- 💻 Tabla comparativa: Métrica | {{MODELO_1}} | {{MODELO_2}} | Objetivo
+- 📌 ¿Cuál es mejor? ¿Se cumplieron criterios?
+
+**5.2 Gráfico Comparativo:**
+- 💻 Barras lado a lado: {{MODELO_1}} vs {{MODELO_2}}
+- 💻 Una barra por métrica (Accuracy, Precision, Recall, F1, AUC)
+
+**5.3 Matriz de Confusión:**
+- 💻 Heatmap 2×2 para ambos modelos lado a lado
+- 💻 Mostrar TP, TN, FP, FN
+- 💻 Anotar: TP, FN en primera fila; FP, TN en segunda fila
+- 📌 Interpretar: ¿false positives o false negatives problemáticos?
+
+**5.4 Curva ROC:**
+- 💻 Graficar curva ROC para ambos modelos
+- 💻 Mostrar AUC-ROC en leyenda
+- 💻 Línea diagonal (modelo aleatorio)
+- 📌 ¿Cuál curva es más arriba?
+
+**5.5 Precision-Recall Curve:**
+- 💻 Graficar curva PR para ambos modelos
+- 💻 Especialmente importante si desbalanceado
+- 📌 Comparar áreas bajo curva
+
+**5.6 Feature Importance:**
+- 💻 Barras horizontales Top 10 features para ambos modelos
+- 📌 ¿Importancia similar?
+
+**5.7 Threshold Analysis (opcional pero recomendado):**
+- 💻 Variar threshold de decisión (por defecto 0.5)
+- 💻 Mostrar cómo cambian Precision, Recall, F1 según threshold
+- 💻 Elegir threshold óptimo según criterio de negocio
+- 📌 En algunos casos, 0.5 no es óptimo
+
+#### FASE 6: DEPLOYMENT
+
+**6.1 Modelo Ganador:**
+- 💻 Comparar {{MODELO_1}} vs {{MODELO_2}} según AUC-ROC (métrica más robusta)
+- 💻 Entrenar con TODO el dataset
+- 💻 Guardar: joblib.dump(model, 'clasificador_{{PROYECTO}}.pkl')
+- 📌 Justificar elección
+
+**6.2 Predictor Interactivo:**
+- 💻 Función que acepte feature values → retorne clase + probabilidad
+- 💻 Ejemplo: predict_churn(edad, gasto_mensual, meses_contrato)
+  - Retorna: "Probabilidad de churn: 72% (ALTO RIESGO)"
+- 💻 3–5 ejemplos realistas
+- 📌 Cómo usar en la práctica
+
+**6.3 Conclusiones:**
+- 📌 "Rendimiento Final": ¿Se cumplieron criterios?
+- 📌 "Métricas Interpretables": "El modelo detecta el 87% de churners pero falsa alarma en 15%"
+- 📌 "Features Más Importantes": Top 3 predictores
+- 📌 "Limitaciones": ¿Desbalance resuelto? ¿Qué error es más costoso?
+- 📌 "Trabajo Futuro": balanceo de clases, más datos, feature engineering
+
+### REQUISITOS TÉCNICOS:
+
+**Cada celda de código:**
+- Comentarios explicativos
+- print() con resumen
+- Sin errores
+
+**Cada celda markdown:**
+- Encabezados jerárquicos
+- Tablas para comparaciones
+- > para énfasis
+- Explicar "por qué"
+
+**Visualizaciones:**
+- Títulos, ejes, leyenda
+- Colores: azul {{MODELO_1}}, naranja {{MODELO_2}}, verde criterio
+- Fuente legible
+
+### TONO:
+
+- Accesible pero riguroso
+- Cada decisión justificada
+- Muchos gráficos
+
+---FIN DEL PROMPT---
+
+================================================================================
+SECCIÓN D: EJEMPLOS DE RELLENOS TÍPICOS
+================================================================================
+
+EJEMPLO 1: Titanic (Sobrevivencia)
+---
+NOMBRE_PROYECTO = Predicción de Supervivencia en el Titanic
+OBJETIVO = Predecir si un pasajero sobrevivió al naufragio del Titanic
+ARCHIVO_CSV = titanic.csv
+NÚMERO = 891
+var1, var2, ... = age, sex, pclass, fare, embarked, sibsp, parch
+VARIABLE_OBJETIVO = Survived
+CLASE_1 = No (0)
+CLASE_2 = Sí (1)
+DISTRIBUCIÓN = No: ~62%, Sí: ~38%
+MODELO_1 = Logistic Regression
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.80
+Precision ≥ 0.75
+Recall ≥ 0.72
+AUC-ROC ≥ 0.85
+
+EJEMPLO 2: Detección de Spam
+---
+NOMBRE_PROYECTO = Clasificación de Emails como Spam
+OBJETIVO = Predecir si un email es spam o legítimo
+ARCHIVO_CSV = email_spam.csv
+NÚMERO = 5000
+var1, var2, ... = word_freq_make, word_freq_address, char_freq_semicolon, capital_run_length_longest, etc.
+VARIABLE_OBJETIVO = is_spam
+CLASE_1 = Legítimo (0)
+CLASE_2 = Spam (1)
+DISTRIBUCIÓN = Legítimo: ~60%, Spam: ~40%
+MODELO_1 = Logistic Regression
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.95
+Precision ≥ 0.92 (importante no bloquear emails legítimos)
+Recall ≥ 0.88
+AUC-ROC ≥ 0.97
+
+EJEMPLO 3: Detección de Diabetes
+---
+NOMBRE_PROYECTO = Predicción de Diabetes tipo 2
+OBJETIVO = Predecir si una persona tiene o tendrá diabetes
+ARCHIVO_CSV = diabetes.csv
+NÚMERO = 768
+var1, var2, ... = age, BMI, glucose, blood_pressure, pregnancies
+VARIABLE_OBJETIVO = diabetic
+CLASE_1 = No diabético (0)
+CLASE_2 = Diabético (1)
+DISTRIBUCIÓN = No diabético: ~65%, Diabético: ~35%
+MODELO_1 = Logistic Regression
+MODELO_2 = XGBoost Classifier
+Accuracy ≥ 0.78
+Precision ≥ 0.72 (importante no alarmar falsos positivos)
+Recall ≥ 0.68 (importante detectar positivos reales)
+AUC-ROC ≥ 0.82
+
+================================================================================
+SECCIÓN E: CHECKLIST DE CALIDAD
+================================================================================
+
+□ ¿Notebook ejecuta de principio a fin sin errores?
+□ ¿Tiene las 6 fases CRISP-DM en orden?
+□ ¿Cada celda está comentada?
+□ ¿Hay mínimo 1 gráfico por subsección?
+□ ¿Los gráficos tienen título, ejes, leyenda?
+□ ¿Se muestran Accuracy, Precision, Recall, F1, AUC-ROC?
+□ ¿Hay tabla comparativa {{MODELO_1}} vs {{MODELO_2}}?
+□ ¿Se muestran matrices de confusión para ambos?
+□ ¿Hay curva ROC?
+□ ¿Hay curva Precision-Recall?
+□ ¿Se reporta feature importance?
+□ ¿Se justifica cada decisión?
+□ ¿Se menciona el desbalance de clases (si aplica)?
+□ ¿Se usa stratified split?
+□ ¿Hay predictor interactivo con probabilidades?
+□ ¿Conclusiones responden si se cumplieron criterios?
+□ ¿Se discute qué error (FP vs FN) es más importante?
+
+================================================================================
+SECCIÓN F: MÉTRICAS EXPLICADAS (Clasificación Binaria)
+================================================================================
+
+**Accuracy:**
+- Fórmula: (TP + TN) / Total
+- Interpretación: % correcto global
+- ⚠️ Engañoso si desbalanceado (95% accuracy con 95% clases negativas)
+
+**Precision (Valor Predictivo Positivo):**
+- Fórmula: TP / (TP + FP)
+- Interpretación: de los positivos predichos, ¿cuántos son reales?
+- Importante si falso positivo cuesta mucho (ej: spam)
+
+**Recall (Sensibilidad, True Positive Rate):**
+- Fórmula: TP / (TP + FN)
+- Interpretación: de los positivos reales, ¿cuántos detectamos?
+- Importante si falso negativo cuesta mucho (ej: diagnóstico)
+
+**Specificity (True Negative Rate):**
+- Fórmula: TN / (TN + FP)
+- Interpretación: de los negativos reales, ¿cuántos predijimos bien?
+
+**F1-Score:**
+- Fórmula: 2 × (Precision × Recall) / (Precision + Recall)
+- Interpretación: media armónica de Precision y Recall
+- Usa si balancear ambas métricas es importante
+
+**AUC-ROC:**
+- Rango: 0.5 a 1.0 (0.5 = azar, 1.0 = perfecto)
+- Interpretación: probabilidad de clasificar un par positivo/negativo correctamente
+- ✓ Inmune al desbalance de clases
+- ✓ Mejor métrica para comparar modelos en clasificación
+
+**ROC Curve:**
+- X: False Positive Rate (1 - Specificity)
+- Y: True Positive Rate (Recall)
+- Área bajo curva = AUC-ROC
+
+**Precision-Recall Curve:**
+- X: Recall
+- Y: Precision
+- Especialmente importante si desbalanceado
+
+================================================================================
+SECCIÓN G: NOTAS FINALES
+================================================================================
+
+1. **Desbalance de clases:** Si una clase >> otra:
+   - Usa stratified split
+   - Usa class_weight='balanced' en modelo
+   - Evita Accuracy; usa Precision, Recall, F1, AUC-ROC
+   - Considera oversampling (SMOTE) si dataset muy pequeño
+
+2. **Threshold:** Por defecto es 0.5, pero no siempre es óptimo
+   - Threshold alto (ej: 0.7) → menor FP, mayor FN (más selectivo)
+   - Threshold bajo (ej: 0.3) → mayor FP, menor FN (menos selectivo)
+   - Elige según costo de negocio
+
+3. **Costo de errores:** En medicina, FN es crítico; en spam, FP es crítico
+   - Esto afecta qué métrica optimizar (Recall vs Precision)
+
+4. **RandomizedSearchCV:** scoring='roc_auc' es más robusto que scoring='accuracy'
+
+5. **Feature Importance:** XGBoost vs Logistic Regression
+   - XGBoost es no-lineal, puede captar interacciones
+   - Logistic Regression es interpretable (coeficientes = importancia)
+
+6. **Siempre visualiza:** Curva ROC, matriz confusión, PR curve
+   - Un modelo con AUC=0.85 pero matriz confusión rara = problema
+
+7. **Probabilidades:** Siempre guarda predict_proba, no solo clases
+   - Permite analizar confianza y ajustar threshold
+
+================================================================================
+FIN DE LA PLANTILLA - CLASIFICACIÓN BINARIA
+================================================================================

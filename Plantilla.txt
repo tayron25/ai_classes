@@ -1,0 +1,397 @@
+================================================================================
+PLANTILLA UNIVERSAL DE PROMPTS PARA NOTEBOOKS DE MACHINE LEARNING - CRISP-DM
+================================================================================
+
+INSTRUCCIONES DE USO:
+====================
+1. Reemplaza todos los valores entre {{LLAVES}} con tus datos específicos
+2. Copia el prompt completo a ChatGPT, Claude, GitHub Copilot u otro modelo generativo
+3. El modelo creará un notebook Jupyter completo y listo para ejecutar
+4. Cada sección contiene explicaciones para el lector
+
+================================================================================
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+================================================================================
+
+PROYECTO: {{NOMBRE_PROYECTO}}
+TIPO DE PROBLEMA: {{REGRESIÓN o CLASIFICACIÓN}}
+OBJETIVO: {{DESCRIPCIÓN DEL OBJETIVO (¿Qué queremos predecir y por qué?)}}
+
+DATASET PRINCIPAL:
+  - Nombre del archivo: {{ARCHIVO_CSV.csv}}
+  - Cantidad de registros esperada: {{NÚMERO}}
+  - Variables disponibles (lista): {{var1, var2, var3, ...}}
+  - Variable objetivo (a predecir): {{VARIABLE_TARGET}}
+
+MODELOS A COMPARAR:
+  - Modelo 1: {{MODELO_1 (ej: Random Forest)}}
+  - Modelo 2: {{MODELO_2 (ej: XGBoost)}}
+  - [Opcional] Modelo 3: {{MODELO_3}}
+
+CRITERIOS DE ÉXITO:
+  {{
+  Para regresión:
+    - R² (Coeficiente de Determinación) ≥ {{VALOR, ej: 0.65}}
+    - RMSE (Error Cuadrático Medio Raíz) ≤ {{VALOR, ej: 4.5}}
+    - MAE (Error Absoluto Medio) ≤ {{VALOR, ej: 3.5}}
+  
+  Para clasificación:
+    - Accuracy ≥ {{VALOR, ej: 0.85}}
+    - Precision ≥ {{VALOR, ej: 0.80}}
+    - Recall ≥ {{VALOR, ej: 0.75}}
+    - AUC-ROC ≥ {{VALOR, ej: 0.85}}
+  }}
+
+================================================================================
+SECCIÓN B: TABLA DE VARIABLES (DATA DICTIONARY)
+================================================================================
+
+Incluye una tabla en el notebook con:
+
+| Variable | Tipo | Descripción | Unidad | Rango/Valores |
+|----------|------|-------------|--------|---------------|
+| {{VAR1}} | {{número/texto}} | {{Descripción}} | {{Unidad}} | {{Rango}} |
+| {{VAR2}} | {{número/texto}} | {{Descripción}} | {{Unidad}} | {{Rango}} |
+| ... | ... | ... | ... | ... |
+
+Ejemplo para Body Performance:
+| height_cm | número | Altura de la persona | cm | 140–220 |
+| grip_force | número | Fuerza de agarre | kg | 5–80 |
+| gender | categórica | Sexo | M/F | — |
+
+================================================================================
+SECCIÓN C: PLANTILLA DE PROMPT PARA EL MODELO GENERATIVO
+================================================================================
+
+---COMIENZA AQUÍ EL PROMPT---
+
+Necesito que crees un **Jupyter Notebook completo** que siga la metodología **CRISP-DM** 
+para {{TIPO_DE_PROBLEMA: regresión/clasificación}}.
+
+### ESPECIFICACIONES DEL PROYECTO:
+
+**Título:** {{NOMBRE_PROYECTO}}
+**Objetivo:** {{OBJETIVO}}
+**Dataset:** {{ARCHIVO_CSV}} con {{NÚMERO}} filas y variables: {{var1, var2, ...}}
+**Variable objetivo:** {{VARIABLE_TARGET}}
+**Modelos:** {{MODELO_1}} vs {{MODELO_2}}
+**Criterios de éxito:** {{CRITERIO_1}}, {{CRITERIO_2}}, etc.
+
+### ESTRUCTURA DEL NOTEBOOK (6 FASES CRISP-DM):
+
+#### FASE 0: INTRODUCCIÓN Y SETUP
+- Celda markdown: Título, autor, asignatura/proyecto, objetivo
+- Celda markdown: Explicar qué es CRISP-DM (6 fases, tabla)
+- Celda markdown: Tabla de data dictionary (variables, tipos, descripción)
+- Celda de código: Importar librerías (numpy, pandas, matplotlib, seaborn, sklearn, {{MODELO_1}}, {{MODELO_2}})
+- Celda markdown: Explicar cada librería y su propósito
+
+#### FASE 1: BUSINESS UNDERSTANDING (Entender el Problema)
+- Celda markdown: "El Problema" — explicar por qué es importante resolver esto
+- Celda markdown: "Variables disponibles" — describir qué tiene el dataset
+- Celda markdown: "Criterios de éxito" — tabla con métricas objetivo y sus interpretaciones
+- Celda markdown: "¿Por qué {{MODELO_1}} y {{MODELO_2}}?" — justificar la elección de modelos
+- Celda de código: Cargar dataset, mostrar primeras 8 filas, dimensiones, columnas
+
+#### FASE 2: DATA UNDERSTANDING (Conocer los Datos)
+Subsección 2.1: Carga y estructura
+- Celda de código: pd.read_csv() + .shape, .dtypes, .describe()
+- Celda markdown: Interpretación de estadísticas (media, desv. estándar, rango)
+
+Subsección 2.2: Calidad de datos
+- Celda de código: Verificar nulos, duplicados, distribución de categorías
+- Celda markdown: Interpretación
+
+Subsección 2.3: Distribución de la variable objetivo
+- Celda de código: Histogramas + boxplots por grupo (si hay variables categóricas)
+- Celda markdown: Describir la forma de la distribución (asimetría, curtosis, si es normal)
+- Gráfico: Mostrar media, mediana, desv. estándar en el histograma
+
+Subsección 2.4: Distribución de todas las variables numéricas
+- Celda de código: Grid de histogramas (4 columnas, tantas filas como necesario)
+- Celda markdown: Observaciones sobre sesgos, bimodalidad, outliers iniciales
+
+Subsección 2.5: Comparación por grupos (si existen variables categóricas)
+- Celda de código: Boxplots lado a lado (género, tipo, clase, etc.)
+- Celda markdown: Diferencias significativas entre grupos
+
+Subsección 2.6: Matriz de correlación
+- Celda de código: 
+  * Heatmap triangular con todas las correlaciones
+  * Gráfico de barras: Top features correlacionadas con el target
+  * Mostrar umbral de selección (ej: |r| ≥ 0.20)
+- Celda markdown: Identificar features más predictivas, relaciones esperadas vs sorpresivas
+
+Subsección 2.7: Scatter plots de top features vs target
+- Celda de código: 5 scatter plots lado a lado con línea de tendencia
+- Gráfico: Colorear por grupo (gender, clase, etc.) para ver patrones por subgrupo
+- Celda markdown: Interpretar linealidad, dispersión, separación por grupos
+
+Subsección 2.8: Detección de outliers (método IQR)
+- Celda de código: Calcular outliers IQR para cada variable, mostrar en tabla
+- Celda de código: Grid de boxplots mostrando outliers en rojo
+- Celda markdown: Estrategia a usar (capping IQR vs eliminación vs mantener)
+
+#### FASE 3: DATA PREPARATION (Preparar Datos)
+Subsección 3.1: Limpieza y codificación
+- Celda de código: Eliminar duplicados
+- Celda de código: Codificar variables categóricas (si aplica) — explicar mapping
+- Celda de código: Crear feature engineering si aplica (ej: BMI = peso / altura²)
+- Celda markdown: Justificar cada decisión
+
+Subsección 3.2: Capping de outliers
+- Celda de código: Función iqr_cap() que recorta valores extremos
+- Celda de código: Aplicar y reportar cuántos valores se recortaron por variable
+- Celda markdown: Explicar por qué capping vs eliminación
+
+Subsección 3.3: Selección de features por correlación
+- Celda de código: Calcular |correlación| con target, filtrar por umbral (ej: 0.20)
+- Celda de código: Mostrar features seleccionadas vs descartadas
+- Celda markdown: Justificar descartes
+
+Subsección 3.4: Análisis de multicolinealidad (VIF)
+- Celda de código: Calcular VIF para cada feature seleccionada
+- Celda markdown: Interpretar resultados, decidir si eliminar features muy correlacionadas
+- [Opcional] Celda de código: Si VIF > 10, mostrar matriz de correlación entre features
+
+Subsección 3.5: División train/test
+- Celda de código: train_test_split(test_size=0.2, random_state=42)
+- Celda de código: Mostrar tamaños, distribución de target en train vs test
+- Celda markdown: Explicar por qué 80/20 y por qué random_state es importante
+
+Subsección 3.6: Estandarización
+- Celda de código: StandardScaler dentro de Pipeline
+- Celda markdown: Explicar por qué la estandarización es importante (evita que features con mayor rango dominen)
+
+#### FASE 4: MODELING (Entrenar Modelos)
+Subsección 4.1: Configuración de modelos base
+- Celda de código: Crear {{MODELO_1}}Regressor/Classifier (parámetros por defecto)
+- Celda de código: Crear {{MODELO_2}}Regressor/Classifier (parámetros por defecto)
+- Celda markdown: Explicar cada modelo (¿qué es? ¿cómo funciona?)
+
+Subsección 4.2: Pipelines
+- Celda de código: Crear Pipeline para {{MODELO_1}}: StandardScaler → {{MODELO_1}}
+- Celda de código: Crear Pipeline para {{MODELO_2}}: StandardScaler → {{MODELO_2}}
+- Celda markdown: Explicar qué es un Pipeline y por qué evita data leakage
+
+Subsección 4.3: Búsqueda de hiperparámetros (RandomizedSearchCV)
+- Celda markdown: Explicar qué son hiperparámetros y por qué necesitan tunearsen
+- Celda de código: Definir grilla de hiperparámetros para {{MODELO_1}}
+  * {{MODELO_1}}: {{lista de parámetros tipicos}}
+  * {{MODELO_2}}: {{lista de parámetros tipicos}}
+- Celda de código: Ejecutar RandomizedSearchCV(n_iter=20, cv=5) para {{MODELO_1}}
+- Celda de código: Mostrar best_params_ y best_score_
+- Celda de código: Repetir para {{MODELO_2}}
+- Celda markdown: Comparar best_params_ y best_score_ entre modelos
+
+Subsección 4.4: Validación cruzada (Cross-Validation)
+- Celda de código: cross_val_score(cv=5) para ambos modelos
+- Celda de código: Mostrar media ± desviación estándar del score en CV
+- Celda markdown: Interpretar variabilidad
+
+#### FASE 5: EVALUATION (Evaluar Modelos)
+Subsección 5.1: Métricas en conjunto de prueba
+- Celda de código: Calcular predicciones en X_test
+- Celda de código: {{
+    Para regresión:
+      - R² = r2_score(y_test, y_pred)
+      - RMSE = sqrt(mean_squared_error(y_test, y_pred))
+      - MAE = mean_absolute_error(y_test, y_pred)
+    
+    Para clasificación:
+      - Accuracy, Precision, Recall, F1
+      - Matriz de confusión
+      - AUC-ROC
+  }}
+- Celda de código: Mostrar métricas en tabla comparativa
+- Celda markdown: Interpretar resultados vs criterios de éxito
+
+Subsección 5.2: Comparativa visual de modelos
+- Celda de código: Gráfico de barras: {{MODELO_1}} vs {{MODELO_2}} en cada métrica
+- Celda markdown: ¿Cuál modelo es mejor? ¿Cumple criterios?
+
+Subsección 5.3: Análisis residual (para regresión)
+- Celda de código: residuos = y_test - y_pred
+- Celda de código: Grid de 4 plots:
+  * Histograma de residuos (¿son aproximadamente normales?)
+  * Residuos vs predicciones (¿hay patrones? ¿heteroscedasticidad?)
+  * Q-Q plot (¿cola izquierda y derecha simétricas?)
+  * Residuos ordenados (¿aleatoriedad?)
+- Celda markdown: Diagnosticar violaciones de supuestos
+
+Subsección 5.4: Feature Importance
+- Celda de código: Extraer feature_importances_ de {{MODELO_1}}
+- Celda de código: Extraer feature_importances_ de {{MODELO_2}}
+- Celda de código: Gráfico de barras horizontal mostrando top 10 features para cada modelo
+- Celda markdown: Comparar: ¿{{MODELO_1}} y {{MODELO_2}} asignan importancia similar a features?
+
+Subsección 5.5: Matriz de confusión (para clasificación)
+- Celda de código: Crear matriz de confusión con heatmap
+- Celda markdown: Interpretar TP, TN, FP, FN
+
+#### FASE 6: DEPLOYMENT (Poner en Producción)
+Subsección 6.1: Seleccionar modelo ganador
+- Celda de código: Decidir cuál modelo usar basado en métricas
+- Celda de código: Guardar con joblib: joblib.dump(mejor_modelo, 'modelo.pkl')
+- Celda markdown: Justificar elección
+
+Subsección 6.2: Predictor interactivo
+- Celda de código: Función que acepte valores de entrada y devuelva predicción
+- Celda de código: Ejemplos de uso (predicciones de casos realistas)
+- Celda markdown: Cómo usar el modelo en la práctica
+
+Subsección 6.3: Conclusiones
+- Celda markdown: 
+  * ¿Se cumplieron los criterios de éxito?
+  * ¿Cuál es el error típico del modelo?
+  * ¿Cuáles fueron los features más importantes?
+  * Limitaciones del modelo
+  * Trabajo futuro (más datos, nuevas features, otros modelos)
+
+### REQUISITOS ADICIONALES PARA CADA CELDA:
+
+**Celdas de código:**
+- Cada celda debe estar acompañada de comentarios inline explicando qué hace cada línea
+- Al final de cada celda, print() con resumen de resultados
+- Mantener estilo visual consistente con colores (ej: azul para Modelo1, naranja para Modelo2)
+
+**Celdas de markdown:**
+- Usar encabezados jerárquicos (##, ###, ####)
+- Incluir tablas donde sea relevante
+- Usar > para citas/explicaciones importantes
+- Explicar el "por qué" no solo el "qué"
+
+**Visualizaciones:**
+- Todos los gráficos con título, etiquetas de ejes, leyenda
+- Paleta consistente de colores (no más de 3–4 colores principales)
+- Tamaño de fuente legible (12pt para títulos, 10pt para ejes)
+- Grid/fondo claro para legibilidad
+
+**Flujo del notebook:**
+- Progresivo: cada sección depende de las anteriores
+- Funciona de principio a fin sin errores
+- Genera outputs/gráficos comprensibles para un lector sin experiencia en ML
+
+### ESTILO Y TONO:
+
+- Explicaciones claras dirigidas a estudiantes de IA
+- Cada decisión técnica justificada
+- Evitar jerga sin explicación
+- Ejemplos y analogías cuando sea útil
+- Riqueza visual: muchos gráficos, pocos textos largos
+
+---FIN DEL PROMPT---
+
+================================================================================
+SECCIÓN D: GUÍA DE PERSONALIZACIÓN POR TIPO DE PROBLEMA
+================================================================================
+
+### SI ES REGRESIÓN (predecir un número continuo):
+
+Modelos típicos: {{Linear Regression}}, {{Random Forest}}, {{XGBoost}}, {{SVR}}
+Métricas: R², RMSE, MAE, MAPE
+Gráficos especiales: Residuos vs predicciones, Q-Q plot, histograma de residuos
+
+### SI ES CLASIFICACIÓN BINARIA (predecir una de dos clases):
+
+Modelos típicos: {{Logistic Regression}}, {{Random Forest Classifier}}, {{XGBoost Classifier}}, {{SVM}}
+Métricas: Accuracy, Precision, Recall, F1, AUC-ROC
+Gráficos especiales: Matriz de confusión, curva ROC, curva PR
+
+### SI ES CLASIFICACIÓN MULTICLASE (predecir 3+ clases):
+
+Modelos típicos: {{Random Forest Classifier}}, {{XGBoost Classifier}}, {{Neural Network}}
+Métricas: Accuracy, Macro-Precision, Macro-Recall, Macro-F1, Weighted F1
+Gráficos especiales: Matriz de confusión multiclase, curva ROC por clase
+
+================================================================================
+SECCIÓN E: CHECKLIST DE CALIDAD DEL NOTEBOOK
+================================================================================
+
+Una vez que el modelo genere el notebook, verifica:
+
+□ ¿El notebook ejecuta de principio a fin sin errores?
+□ ¿Cada celda tiene comentarios que explican qué hace?
+□ ¿Las celdas markdown explican el "por qué", no solo el "qué"?
+□ ¿Hay al menos 1 gráfico por subsección?
+□ ¿Los gráficos tienen títulos, etiquetas de ejes y leyenda?
+□ ¿Se comparan los dos modelos explícitamente?
+□ ¿Se reportan métricas para ambos modelos en tabla?
+□ ¿Las conclusiones responden si se cumplieron criterios de éxito?
+□ ¿Hay una sección de deployment con predictor interactivo?
+□ ¿El lenguaje es accesible para un estudiante de IA?
+□ ¿Se sigue la estructura CRISP-DM en orden?
+□ ¿Hay análisis visual (gráficos) además de análisis numérico?
+□ ¿Se explica la importancia de features?
+□ ¿Se discuten limitaciones del modelo?
+□ ¿Se propone trabajo futuro?
+
+================================================================================
+SECCIÓN F: EJEMPLOS DE RELLENOS TÍPICOS
+================================================================================
+
+Ejemplo 1: Body Performance (Regresión)
+---
+NOMBRE_PROYECTO = Predicción de Grasa Corporal
+TIPO_DE_PROBLEMA = Regresión
+OBJETIVO = Predecir el porcentaje de grasa corporal a partir de medidas físicas simples
+ARCHIVO_CSV = bodyPerformance.csv
+NÚMERO = 13393
+VARIABLE_TARGET = body fat_%
+MODELO_1 = Random Forest
+MODELO_2 = XGBoost
+CRITERIO_1 = R² ≥ 0.65
+CRITERIO_2 = RMSE ≤ 4.5%
+
+Ejemplo 2: Titanic (Clasificación Binaria)
+---
+NOMBRE_PROYECTO = Predicción de Supervivencia en el Titanic
+TIPO_DE_PROBLEMA = Clasificación
+OBJETIVO = Predecir si un pasajero sobrevivió o no al naufragio
+ARCHIVO_CSV = titanic.csv
+NÚMERO = 891
+VARIABLE_TARGET = Survived (0/1)
+MODELO_1 = Logistic Regression
+MODELO_2 = XGBoost Classifier
+CRITERIO_1 = Accuracy ≥ 0.85
+CRITERIO_2 = AUC-ROC ≥ 0.85
+
+Ejemplo 3: Iris (Clasificación Multiclase)
+---
+NOMBRE_PROYECTO = Clasificación de Especies de Iris
+TIPO_DE_PROBLEMA = Clasificación Multiclase
+OBJETIVO = Clasificar flores en 3 especies según medidas de sépalos y pétalos
+ARCHIVO_CSV = iris.csv
+NÚMERO = 150
+VARIABLE_TARGET = Species (Setosa/Versicolor/Virginica)
+MODELO_1 = Random Forest
+MODELO_2 = XGBoost Classifier
+CRITERIO_1 = Accuracy ≥ 0.90
+CRITERIO_2 = Macro-F1 ≥ 0.88
+
+================================================================================
+SECCIÓN G: NOTAS FINALES
+================================================================================
+
+1. Esta plantilla es flexible: adapta las secciones según tu caso específico.
+
+2. Si tu dataset es muy pequeño (< 100 filas), usa CV (validación cruzada) en lugar 
+   de split train/test simple.
+
+3. Si hay desbalance de clases (clasificación), usa stratified split y ajusta métricas.
+
+4. Si el dataset es muy grande (> 1M filas), considera subsampling o batch learning.
+
+5. Siempre visualiza. Un modelo con R² = 0.85 es mediocre si los residuos no son 
+   normales (violación de supuestos).
+
+6. Documentación es educación: explica cada paso para que otros (y tú mismo en 6 meses) 
+   entiendan qué sucedió.
+
+7. La "mejor métrica" depende del contexto. En medicina, recall es crítico 
+   (no quieres perder diagnósticos). En spam detection, precision es crítico 
+   (no quieres bloquear emails reales).
+
+================================================================================
+FIN DE LA PLANTILLA
+================================================================================

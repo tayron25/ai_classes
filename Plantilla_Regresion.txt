@@ -1,0 +1,393 @@
+================================================================================
+PLANTILLA DE PROMPTS PARA REGRESIÓN - CRISP-DM
+================================================================================
+Especializada para problemas donde predices un NÚMERO CONTINUO.
+Ejemplo: predecir precio de casa, grasa corporal, temperatura, etc.
+
+INSTRUCCIONES DE USO:
+====================
+1. Reemplaza todos los {{VALORES}} con tus datos específicos
+2. Copia el PROMPT PRINCIPAL (Sección C) completo
+3. Pégalo en ChatGPT, Claude o Copilot
+4. Recibirás un notebook completo con todas las fases CRISP-DM
+
+================================================================================
+SECCIÓN A: CONFIGURACIÓN DEL PROYECTO
+================================================================================
+
+PROYECTO: {{NOMBRE_PROYECTO}}
+OBJETIVO: {{DESCRIPCIÓN (ej: Predecir el precio de viviendas según área, habitaciones, ubicación, etc.)}}
+
+DATASET PRINCIPAL:
+  - Archivo: {{ARCHIVO_CSV.csv}}
+  - Registros: {{NÚMERO}} filas
+  - Features (variables de entrada): {{var1, var2, var3, ...}}
+  - Target (variable a predecir): {{VARIABLE_OBJETIVO}} (rango: {{MIN}} - {{MAX}})
+
+MODELOS A COMPARAR:
+  - Modelo 1: {{MODELO_1}} (ej: Random Forest Regressor)
+  - Modelo 2: {{MODELO_2}} (ej: XGBoost Regressor)
+
+CRITERIOS DE ÉXITO:
+  - R² (Coeficiente de Determinación): ≥ {{VALOR}} (explica qué % de varianza)
+  - RMSE (Error Cuadrático Medio): ≤ {{VALOR}} (error promedio en unidades del target)
+  - MAE (Error Absoluto Medio): ≤ {{VALOR}} (error en unidades del target, más interpretable)
+  - MAPE (Error Porcentual Absoluto Medio): ≤ {{VALOR}}% (si importa el error relativo)
+
+================================================================================
+SECCIÓN B: DATA DICTIONARY
+================================================================================
+
+| Feature | Tipo | Descripción | Unidad | Rango/Valores |
+|---------|------|-------------|--------|---------------|
+| {{VAR1}} | {{número}} | {{Descripción}} | {{Unidad}} | {{Rango}} |
+| {{VAR2}} | {{número/categórica}} | {{Descripción}} | {{Unidad}} | {{Rango}} |
+| **{{TARGET}}** | **número** | **VARIABLE A PREDECIR** | {{Unidad}} | {{Rango}} |
+
+================================================================================
+SECCIÓN C: PROMPT PRINCIPAL (COPIAR COMPLETO)
+================================================================================
+
+---COMIENZA AQUÍ---
+
+Crea un **Jupyter Notebook completo** que prediga {{VARIABLE_OBJETIVO}} usando 
+la metodología **CRISP-DM** (6 fases). Compara {{MODELO_1}} vs {{MODELO_2}}.
+
+### ESPECIFICACIONES:
+
+**Proyecto:** {{NOMBRE_PROYECTO}}
+**Dataset:** {{ARCHIVO_CSV}} (~{{NÚMERO}} registros)
+**Features:** {{var1, var2, var3, ...}}
+**Target:** {{VARIABLE_OBJETIVO}} (rango: {{MIN}}-{{MAX}})
+**Modelos:** {{MODELO_1}} vs {{MODELO_2}}
+**Criterios:** R² ≥ {{VALOR}}, RMSE ≤ {{VALOR}}, MAE ≤ {{VALOR}}
+
+### ESTRUCTURA (6 FASES CRISP-DM):
+
+#### FASE 0: INTRODUCCIÓN
+- 📌 Markdown: Título, estudiante/proyecto, objetivo en 2 líneas
+- 📌 Markdown: ¿Qué es CRISP-DM? Tabla con 6 fases
+- 📌 Markdown: Data Dictionary (tabla: feature | tipo | descripción | unidad | rango)
+- 💻 Código: Importar librerías (numpy, pandas, matplotlib, seaborn, scipy, sklearn, {{MODELO_1}}, {{MODELO_2}}, joblib)
+- 📌 Markdown: Justificación de cada librería
+
+#### FASE 1: BUSINESS UNDERSTANDING
+- 📌 "El Problema": ¿Por qué es importante predecir {{VARIABLE_OBJETIVO}}? 
+- 📌 "Variables Disponibles": Describir cada feature en 1–2 líneas
+- 📌 "Criterios de Éxito": Tabla con métrica | objetivo | interpretación
+- 📌 "¿Por qué {{MODELO_1}} y {{MODELO_2}}?": Ventajas y desventajas de cada uno
+- 💻 Cargar dataset: pd.read_csv(), .shape, .columns, .head(10)
+
+#### FASE 2: DATA UNDERSTANDING
+**2.1 Carga y estructura:**
+- 💻 df.dtypes, df.describe().round(2)
+- 📌 Interpretación: media, desviación estándar, mín/máx para cada variable
+
+**2.2 Calidad:**
+- 💻 Nulos por columna, duplicados totales
+- 💻 Distribución de tipos de datos
+
+**2.3 Distribución del Target:**
+- 💻 Histograma con media, mediana, líneas de ±1σ
+- 💻 Estadísticos: media, mediana, desv. est., asimetría, curtosis
+- 📌 ¿Es simétrico? ¿Hay sesgo? ¿Es normal?
+
+**2.4 Distribución de todas las variables numéricas:**
+- 💻 Grid 4 columnas de histogramas (una para cada feature)
+- 📌 Observaciones: sesgos, bimodalidad, rangos
+
+**2.5 Por grupos (si hay categorías):**
+- 💻 Boxplots comparativos si existe variable categórica
+- 📌 Diferencias entre grupos
+
+**2.6 Matriz de correlación:**
+- 💻 Heatmap triangular (triangular superior para simetría)
+- 💻 Gráfico de barras: features ordenadas por |correlación| con target
+- 💻 Mostrar umbral (ej: líneas en ±0.20)
+- 📌 Top features con target, correlaciones sorprendentes
+
+**2.7 Scatter plots Top 5 Features vs Target:**
+- 💻 5 subplots lado a lado
+- 💻 Cada scatter + línea de tendencia (regresión lineal simple)
+- 💻 Colorear por grupo categórico si existe
+- 📌 ¿Relaciones lineales? ¿Dispersión? ¿Tendencia clara?
+
+**2.8 Outliers (método IQR):**
+- 💻 Tabla: feature | Q1 | Q3 | límite_inf | límite_sup | N_outliers | % total
+- 💻 Grid de boxplots mostrando outliers en rojo
+- 📌 Estrategia: capping IQR vs eliminación
+
+#### FASE 3: DATA PREPARATION
+
+**3.1 Limpieza y Feature Engineering:**
+- 💻 Eliminar duplicados (si los hay)
+- 💻 Codificar categóricas si existen (ej: gender → 0/1)
+- 💻 Crear features nuevas si aplica (ej: BMI, interacciones)
+- 📌 Justificar cada decisión
+
+**3.2 Capping de Outliers (IQR × 1.5):**
+- 💻 Función iqr_cap() que recorta valores extremos
+- 💻 Aplicar a todas las features excepto el target
+- 💻 Reportar: cuántos valores recortados por variable
+- 📌 ¿Por qué capping y no eliminación?
+
+**3.3 Selección de Features por Correlación:**
+- 💻 Calcular correlación con target para cada feature
+- 💻 Mostrar lista: features con |r| ≥ 0.20 (SELECCIONADAS)
+- 💻 Mostrar lista: features con |r| < 0.20 (DESCARTADAS)
+- 💻 Gráfico de barras: features ordenadas por correlación
+- 📌 Justificar descartes
+
+**3.4 Multicolinealidad (VIF):**
+- 💻 Calcular VIF para cada feature seleccionada
+- 💻 Tabla: feature | VIF (mostrar si VIF > 10)
+- 💻 Si VIF > 10: considerar eliminar la feature
+- 📌 Interpretar: ¿hay multicolinealidad problemática?
+
+**3.5 División Train/Test:**
+- 💻 train_test_split(test_size=0.20, random_state={{SEED}})
+- 💻 Mostrar tamaños y distribución de target en train vs test
+- 📌 ¿Distribuciones similares? ¿Stratification necesaria?
+
+**3.6 Estandarización (StandardScaler):**
+- 💻 Crear Pipeline: StandardScaler → modelo
+- 📌 ¿Por qué estandarizar? Evita que features con mayor rango dominen
+
+#### FASE 4: MODELING
+
+**4.1 Configuración de modelos:**
+- 📌 "¿Qué es {{MODELO_1}}?" (2–3 párrafos explicando algoritmo)
+- 📌 "¿Qué es {{MODELO_2}}?" (2–3 párrafos)
+- 💻 Crear instancias de ambos modelos (parámetros por defecto)
+
+**4.2 Pipelines:**
+- 💻 Pipeline para {{MODELO_1}}: StandardScaler → {{MODELO_1}}Regressor
+- 💻 Pipeline para {{MODELO_2}}: StandardScaler → {{MODELO_2}}Regressor
+- 📌 ¿Qué es un Pipeline? ¿Por qué evita data leakage?
+
+**4.3 Búsqueda de Hiperparámetros (RandomizedSearchCV):**
+- 📌 "¿Qué son hiperparámetros?" Explicar brevemente
+- 💻 Definir param_grid para {{MODELO_1}} (5–8 parámetros clave)
+- 💻 Ejecutar RandomizedSearchCV(n_iter=20, cv=5)
+- 💻 Mostrar best_params_ y best_score_
+- 💻 Definir param_grid para {{MODELO_2}}
+- 💻 Ejecutar RandomizedSearchCV(n_iter=20, cv=5)
+- 💻 Mostrar best_params_ y best_score_
+- 💻 Tabla comparativa: Modelo | best_score_CV
+
+**4.4 Validación Cruzada (5-fold):**
+- 💻 cross_val_score(cv=5) para ambos modelos
+- 💻 Mostrar media ± desviación estándar
+- 📌 ¿Variabilidad alta? ¿Estable el modelo?
+
+#### FASE 5: EVALUATION
+
+**5.1 Métricas en Test Set:**
+- 💻 Predicciones: y_pred = best_model.predict(X_test)
+- 💻 Calcular: R², RMSE, MAE (y MAPE si aplica)
+- 💻 Tabla comparativa: Métrica | {{MODELO_1}} | {{MODELO_2}} | Objetivo
+- 💻 Mostrar si se cumplen criterios de éxito (✓ / ✗)
+- 📌 ¿Cuál modelo es mejor? ¿Diferencias grandes?
+
+**5.2 Gráfico Comparativo:**
+- 💻 Gráfico de barras lado a lado: {{MODELO_1}} vs {{MODELO_2}}
+- 💻 Una barra por métrica (R², RMSE, MAE)
+- 💻 Colores: azul {{MODELO_1}}, naranja {{MODELO_2}}, verde criterio
+- 📌 Visualización clara del ganador
+
+**5.3 Análisis Residual (Diagnosticar supuestos):**
+- 💻 residuos = y_test - y_pred
+- 💻 Grid 2×2:
+  * Histograma residuos (¿normal? ¿centrado en 0?)
+  * Residuos vs Y_pred (¿patrones? ¿heterocedasticidad?)
+  * Q-Q plot (¿normalidad en colas?)
+  * Residuos ordenados (¿aleatoriedad?)
+- 📌 Interpretar violaciones de supuestos
+
+**5.4 Predicciones vs Valores Reales:**
+- 💻 Scatter plot: y_test vs y_pred
+- 💻 Línea diagonal y = x (predicción perfecta)
+- 💻 Mostrar para ambos modelos lado a lado
+- 💻 Calcular RMSE en el plot
+- 📌 ¿Qué tan cerca están del modelo perfecto?
+
+**5.5 Feature Importance:**
+- 💻 Extraer feature_importances_ de {{MODELO_1}}
+- 💻 Extraer feature_importances_ de {{MODELO_2}}
+- 💻 Gráfico: barras horizontales Top 10 features, lado a lado
+- 📌 ¿Importancia similar en ambos modelos? ¿Sorpresas?
+
+**5.6 Residuos por Feature:**
+- 💻 Para el mejor modelo, graficar residuos vs cada top 3 feature
+- 💻 ¿Hay patrones no lineales que se escapan?
+
+#### FASE 6: DEPLOYMENT
+
+**6.1 Modelo Ganador:**
+- 💻 Decidir cuál modelo usar (mejor R² o mejor RMSE según criterio)
+- 💻 Entrenar modelo final con TODO el dataset (train + test)
+- 💻 Guardar: joblib.dump(model, 'mejor_modelo_{{PROYECTO}}.pkl')
+- 📌 Justificar elección
+
+**6.2 Predictor Interactivo:**
+- 💻 Función predict_bodyfat(feature1, feature2, ...):
+  - Crear dataframe con inputs
+  - Estandarizar
+  - Predecir
+  - Retornar con intervalo de confianza (±RMSE)
+- 💻 Ejemplos de uso: 3–5 predicciones con valores realistas
+- 📌 Cómo usar el modelo en la práctica
+
+**6.3 Conclusiones:**
+- 📌 "Resultados Finales": ¿Se cumplieron criterios de éxito?
+- 📌 "Errores Típicos": RMSE/MAE en unidades interpretables
+- 📌 "Features Más Importantes": Top 3 predictores
+- 📌 "Limitaciones": ¿Qué no sabe hacer el modelo?
+- 📌 "Trabajo Futuro": más datos, nuevas features, otros modelos
+
+### REQUISITOS TÉCNICOS:
+
+**Cada celda de código:**
+- Comentarios inline explicando lógica
+- print() con resumen de resultados
+- Sin errores de principio a fin
+
+**Cada celda markdown:**
+- Encabezados jerárquicos (##, ###, ####)
+- Tablas donde sea relevante
+- > para énfasis
+- Explicar "por qué", no solo "qué"
+
+**Visualizaciones:**
+- Todos con título, ejes etiquetados, leyenda
+- Colores consistentes: azul {{MODELO_1}}, naranja {{MODELO_2}}, verde éxito
+- Fuente 12pt títulos, 10pt ejes
+- Grid/fondo claro
+
+### TONO Y ESTILO:
+
+- Dirigido a estudiantes de IA (accesible pero riguroso)
+- Cada decisión técnica justificada
+- Muchos gráficos, explicaciones claras
+- Lenguaje no técnico donde sea posible
+
+---FIN DEL PROMPT---
+
+================================================================================
+SECCIÓN D: EJEMPLOS DE RELLENOS TÍPICOS
+================================================================================
+
+EJEMPLO 1: Body Performance (Grasa Corporal)
+---
+NOMBRE_PROYECTO = Predicción de Grasa Corporal
+OBJETIVO = Predecir el porcentaje de grasa corporal a partir de medidas físicas simples y rendimiento deportivo
+ARCHIVO_CSV = bodyPerformance.csv
+NÚMERO = 13393
+var1, var2, ... = age, gender, height_cm, weight_kg, diastolic, systolic, gripForce, sit and bend forward_cm, sit-ups counts, broad jump_cm
+VARIABLE_OBJETIVO = body fat_%
+MIN = 3%
+MAX = 78%
+MODELO_1 = Random Forest Regressor
+MODELO_2 = XGBoost Regressor
+R² ≥ 0.65
+RMSE ≤ 4.5%
+MAE ≤ 3.5%
+
+EJEMPLO 2: Precios de Viviendas
+---
+NOMBRE_PROYECTO = Predicción de Precios de Casas
+OBJETIVO = Predecir el precio de venta de viviendas según características (área, habitaciones, ubicación, edad)
+ARCHIVO_CSV = house_prices.csv
+NÚMERO = 1460
+var1, var2, ... = area_sqft, bedrooms, bathrooms, lot_size, year_built, garage_cars, pool, fireplace
+VARIABLE_OBJETIVO = price
+MIN = $34000
+MAX = $755000
+MODELO_1 = Random Forest Regressor
+MODELO_2 = XGBoost Regressor
+R² ≥ 0.80
+RMSE ≤ 50000
+MAE ≤ 35000
+
+EJEMPLO 3: Predicción de Ventas Mensuales
+---
+NOMBRE_PROYECTO = Predicción de Ventas Mensuales
+OBJETIVO = Predecir el volumen de ventas mensuales según temporada, inversión en marketing, día de la semana
+ARCHIVO_CSV = sales_monthly.csv
+NÚMERO = 240
+var1, var2, ... = mes, inversión_marketing, competencia_precio, visitantes_web, email_campaigns
+VARIABLE_OBJETIVO = ventas
+MIN = 2000
+MAX = 45000
+MODELO_1 = Random Forest Regressor
+MODELO_2 = XGBoost Regressor
+R² ≥ 0.70
+RMSE ≤ 3000
+MAE ≤ 2000
+
+================================================================================
+SECCIÓN E: CHECKLIST DE CALIDAD
+================================================================================
+
+□ ¿Notebook ejecuta de principio a fin sin errores?
+□ ¿Tiene las 6 fases CRISP-DM en orden?
+□ ¿Cada celda está comentada?
+□ ¿Hay mínimo 1 gráfico por subsección?
+□ ¿Los gráficos tienen título, ejes, leyenda?
+□ ¿Se muestran métricas para ambos modelos?
+□ ¿Hay tabla comparativa {{MODELO_1}} vs {{MODELO_2}}?
+□ ¿Se analiza la normalidad de residuos?
+□ ¿Se reporta feature importance?
+□ ¿Hay análisis de scatter plot (predicciones vs reales)?
+□ ¿Se explica por qué se descartaron features?
+□ ¿Se justifica cada decisión?
+□ ¿Hay predictor interactivo en deployment?
+□ ¿Conclusiones responden si se cumplieron criterios?
+□ ¿Se propone trabajo futuro?
+
+================================================================================
+SECCIÓN F: MÉTRICAS EXPLICADAS (Regresión)
+================================================================================
+
+**R² (Coeficiente de Determinación):**
+- Rango: 0 a 1 (o negativo si peor que media)
+- Interpretación: % de varianza en target explicada por el modelo
+- R² = 0.80 significa: el modelo explica 80% de la variabilidad
+- Límite teórico: nunca 1.0 porque hay ruido inherente
+
+**RMSE (Root Mean Squared Error):**
+- Unidades: mismas que el target
+- Interpretación: error típico en unidades del target
+- Ejemplo: RMSE = 4.5% significa ±4.5 puntos en promedio
+- Sensible a outliers
+
+**MAE (Mean Absolute Error):**
+- Unidades: mismas que el target
+- Interpretación: error promedio sin penalizar grandes errores
+- Más resistente a outliers que RMSE
+- Más interpretable: "en promedio, el modelo se equivoca ±X"
+
+**MAPE (Mean Absolute Percentage Error):**
+- Rango: 0 a ∞ (porcentaje)
+- Interpretación: error relativo medio
+- Útil si importa el error porcentual, no absoluto
+- Ejemplo: MAPE = 15% significa 15% de error promedio
+
+================================================================================
+SECCIÓN G: NOTAS FINALES
+================================================================================
+
+1. **Si dataset < 100 registros:** Usa 5-fold o 10-fold CV en lugar de split 80/20
+2. **Si dataset > 1M registros:** Considera subsampling o GridSearchCV con subsample
+3. **Si target tiene distribución muy sesgada:** Considera transformación logarítmica
+4. **Si hay outliers extremos:** Capping IQR es más conservador que eliminación
+5. **RandomizedSearchCV:** 20 iteraciones es buen punto de partida; aumenta si tiempo permite
+6. **Feature Engineering:** Agrega features basadas en dominio (BMI, ratios, interacciones)
+7. **Siempre visualiza:** Un R² alto pero residuos no normales = problema
+8. **Interpretabilidad:** XGBoost > RF en velocidad; RF > XGBoost en estabilidad
+9. **Criterios de éxito:** Defínelos ANTES de modelar, no después
+10. **Deployment:** Guarda también el scaler, features seleccionadas, y rango de valores esperados
+
+================================================================================
+FIN DE LA PLANTILLA - REGRESIÓN
+================================================================================
